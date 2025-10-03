@@ -4,7 +4,7 @@
 
 ---
 
-## 📊 The Problem
+## The Problem
 
 Underclassmen in Cornell's CIS Information Science and ISST majors face challenges accessing effective career guidance. 
 
@@ -24,7 +24,7 @@ The existing advising system, facilitated primarily through Zoom meetings with a
 
 ---
 
-## 🎯 Our Mission
+## Our Mission
 
 We aim to **improve access to personalized, relevant career guidance** for undergraduate students in Cornell's Information Science and ISST majors. 
 
@@ -32,7 +32,7 @@ By connecting students with up-to-date advice, resources, and peer experiences t
 
 ---
 
-## 🌍 Social Impact
+## Social Impact
 
 ### Why This Matters
 
@@ -48,7 +48,7 @@ By connecting students with up-to-date advice, resources, and peer experiences t
 
 ---
 
-## 💡 Our Solution
+## Our Solution
 
 PathMatch is a **web application** that intelligently connects CIS underclassmen with graduating seniors through a survey-based matching system.
 
@@ -86,7 +86,7 @@ By the end of **beta testing**, PathMatch will deliver:
 
 ---
 
-## 📅 Timeline
+## Timeline
 
 **Deadline: Thanksgiving**
 
