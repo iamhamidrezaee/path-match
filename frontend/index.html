@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PathMatch connects Cornell CIS students with graduating seniors for personalized mentorship.">
+    <meta name="theme-color" content="#B31B1B">
+    <title>PathMatch — Cornell CIS Mentorship</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <nav class="nav" aria-label="Primary">
+        <div class="nav-content">
+            <div class="logo">PathMatch</div>
+            <button class="nav-toggle" aria-label="Toggle navigation" aria-controls="primary-navigation" aria-expanded="false">
+                <span class="nav-toggle-bar" aria-hidden="true"></span>
+                <span class="nav-toggle-bar" aria-hidden="true"></span>
+                <span class="nav-toggle-bar" aria-hidden="true"></span>
+            </button>
+            <div id="primary-navigation" class="nav-links">
+                <a href="#about">About</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#" class="btn-primary">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <main id="main">
+        <section class="hero">
+            <canvas id="hero-canvas" class="hero-canvas"></canvas>
+            <div class="hero-content reveal">
+                <h1>Your path forward,<br>guided by those<br>who've walked it.</h1>
+                <p class="hero-subtitle">Connect with Cornell CIS seniors for personalized<br>career and course guidance.</p>
+                <div class="hero-actions">
+                    <button class="btn-large btn-primary">Find a Mentor</button>
+                    <button class="btn-large btn-secondary">Become a Mentor</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="stats">
+            <div class="stats-container">
+                <div class="stat-item reveal">
+                    <div class="stat-number">140+</div>
+                    <div class="stat-label">CIS graduates annually</div>
+                </div>
+                <div class="stat-item reveal">
+                    <div class="stat-number">10%</div>
+                    <div class="stat-label">Still seeking employment at graduation</div>
+                </div>
+                <div class="stat-item reveal">
+                    <div class="stat-number">1:1</div>
+                    <div class="stat-label">Personalized mentorship</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="problem">
+            <canvas id="problem-canvas" class="problem-canvas"></canvas>
+            <div class="section-content">
+                <h2>The Gap in Guidance</h2>
+                <div class="problem-grid">
+                    <div class="problem-card reveal">
+                        <div class="card-number">01</div>
+                        <h3>Outdated Resources</h3>
+                        <p>Information doesn't reflect current industry trends and evolving tech sectors.</p>
+                    </div>
+                    <div class="problem-card reveal">
+                        <div class="card-number">02</div>
+                        <h3>Generic Advice</h3>
+                        <p>Guidance is too broad to address specific career paths and individual goals.</p>
+                    </div>
+                    <div class="problem-card reveal">
+                        <div class="card-number">03</div>
+                        <h3>Late Realization</h3>
+                        <p>Students discover they've taken the wrong courses too late in their journey.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works" class="features">
+            <div class="section-content">
+                <div class="features-header">
+                    <h2>How PathMatch Works</h2>
+                    <p class="section-description">Three simple steps to connect with your mentor</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-item reveal">
+                        <div class="feature-number">01</div>
+                        <h3>Share Your Goals</h3>
+                        <p>Complete a brief survey about your career interests, course plans, and what you're looking for in a mentor.</p>
+                    </div>
+                    <div class="feature-item reveal">
+                        <div class="feature-number">02</div>
+                        <h3>Get Matched</h3>
+                        <p>Our algorithm connects you with graduating seniors whose experiences align with your aspirations.</p>
+                    </div>
+                    <div class="feature-item reveal">
+                        <div class="feature-number">03</div>
+                        <h3>Schedule & Connect</h3>
+                        <p>Book a meeting directly through integrated Calendly scheduling—no back-and-forth emails.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta">
+            <canvas id="cta-canvas" class="cta-canvas"></canvas>
+            <div class="cta-content reveal">
+                <h2>Ready to find<br>your path?</h2>
+                <p>Join Cornell CIS students making informed<br>decisions about their future.</p>
+                <button class="btn-large btn-primary">Get Started Today</button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-left">
+                <div class="logo">PathMatch</div>
+                <p>Developed for the Cornell CIS community</p>
+            </div>
+            <div class="footer-right">
+                <div class="footer-section">
+                    <h4>For Students</h4>
+                    <a href="#">Find a Mentor</a>
+                    <a href="#">Become a Mentor</a>
+                </div>
+                <div class="footer-section">
+                    <h4>About</h4>
+                    <a href="#">Mission</a>
+                    <a href="#">Contact</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Improving career outcomes for Information Science and ISST majors</p>
+        </div>
+    </footer>
+    <script defer src="base.js"></script>
+</body>
+</html>
+

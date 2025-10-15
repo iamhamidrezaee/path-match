@@ -130,7 +130,97 @@ By the end of **beta testing**, PathMatch will deliver:
 
 ## Getting Started
 
-*Documentation for setup and installation coming soon.*
+### Project Structure
+
+```
+path-match/
+├── frontend/              # Landing page and UI
+│   ├── index.html
+│   ├── styles.css
+│   └── README.md
+│
+├── backend/              # Flask REST API
+│   ├── app.py           # Main application
+│   ├── database.py      # Database configuration
+│   ├── models.py        # Database models
+│   ├── config.py        # App configuration
+│   ├── run.py           # Quick start script
+│   ├── init_db.py       # Database initialization
+│   ├── requirements.txt
+│   ├── env.example      # Environment variables template
+│   │
+│   ├── routes/          # API endpoints
+│   │   ├── auth.py
+│   │   ├── mentors.py
+│   │   ├── mentees.py
+│   │   └── matching.py
+│   │
+│   └── services/        # Business logic
+│       └── matching_algorithm.py
+│
+└── README.md            # This file
+```
+
+### Backend Setup
+
+1. **Navigate to backend directory**
+   ```bash
+   cd backend
+   ```
+
+2. **Create virtual environment**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Configure environment**
+   ```bash
+   cp env.example .env
+   # Edit .env with your configuration
+   ```
+
+5. **Initialize database**
+   ```bash
+   python init_db.py
+   ```
+
+6. **Run the server**
+   ```bash
+   python run.py
+   ```
+
+   The API will be available at `http://localhost:5000`
+
+### Frontend Setup
+
+1. **Navigate to frontend directory**
+   ```bash
+   cd frontend
+   ```
+
+2. **Open in browser**
+   
+   Simply open `index.html` in your browser, or use a local server:
+   
+   ```bash
+   # Using Python
+   python -m http.server 8000
+   
+   # Using Node.js
+   npx http-server -p 8000
+   ```
+   
+   Then navigate to `http://localhost:8000`
+
+### API Documentation
+
+See [Backend README](./backend/README.md) for detailed API endpoint documentation.
 
 ---
 
