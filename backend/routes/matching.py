@@ -124,3 +124,19 @@ def update_match_status(match_id):
         'match': match.to_dict()
     }), 200
 
+@bp.route('/test', methods=['GET'])
+def test_match():
+    """
+    Simple mock route for frontend testing.
+    Does not require authentication.
+    """
+    print("Frontend successfully connected to backend /api/matches/test")
+    sample_result = {
+        "mentor_name": "Jane Doe",
+        "mentor_id": 101,
+        "mentee_name": "John Smith",
+        "mentee_id": 202,
+        "compatibility_score": 87.5,
+        "message": "This is a test response — the backend is connected!"
+    }
+    return jsonify(sample_result), 200
