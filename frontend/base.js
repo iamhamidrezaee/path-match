@@ -8,6 +8,15 @@ if (navToggle && navLinks) {
   });
 }
 
+// Navigate to signup
+document.getElementById('signup').addEventListener('click', function() 
+{ window.location.href = 'signup.html'; 
+});
+
+document.getElementById('signup1').addEventListener('click', function() 
+{ window.location.href = 'signup.html'; 
+});
+
 // Sticky nav style on scroll
 const nav = document.querySelector('.nav');
 if (nav) {
