@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PathMatch connects Cornell CIS students with graduating seniors for personalized mentorship.">
+    <meta name="theme-color" content="#B31B1B">
+    <title>PathMatch — Match Results</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <nav class="nav" aria-label="Primary">
+        <div class="nav-content">
+            <a href="index.html" class="logo">PathMatch</a>
+            <button class="nav-toggle" aria-label="Toggle navigation" aria-controls="primary-navigation" aria-expanded="false">
+                <span class="nav-toggle-bar" aria-hidden="true"></span>
+                <span class="nav-toggle-bar" aria-hidden="true"></span>
+                <span class="nav-toggle-bar" aria-hidden="true"></span>
+            </button>
+            <div id="primary-navigation" class="nav-links">
+                <a href="#about">About</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="signup.html" class="btn-primary">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+<div class="match-page">
+    <aside class="sidebar">
+        <h2 class="sidebar-title">Match Criteria</h2>
+
+        <div class="filter-group">
+            <label for="concentration">Concentration</label>
+            <select id="concentration" name="concentration">
+            <option value="">Select...</option>
+            <option value="Behavioral Science">Behavioral Science</option>
+            <option value="Data Science">Data Science</option>
+            <option value="Digital Culture and Production">Digital Culture and Production</option>
+            <option value="Information Ethics, Law, and Policy">Information Ethics, Law, and Policy</option>
+            <option value="Interactive Technologies">Interactive Technologies</option>
+            <option value="Networks, Crowds, and Markets">Networks, Crowds, and Markets</option>
+            <option value="UX">UX (User Experience)</option>
+            <option value="I don't know">I don’t know</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="industry">Industry</label>
+            <select id="industry" name="industry">
+                <option value="">Select...</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="topic">Topic</label>
+            <select id="topic" name="topic">
+                <option value="">Select...</option>
+            </select>
+        </div>
+    </aside>
+
+    <main class="results-container">
+        <h2 class="results-title">Mentor Matches</h2>
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Grad Year</th>
+                    <th>Current Industry</th>
+                    <th>Email</th>
+                    <th>Company</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="profile-cell">
+                            <span>John Doe</span>
+                        </div>
+                    </td>
+                    <td>2025</td>
+                    <td>Software Development</td>
+                    <td>jd999@cornell.edu</td>
+                    <td>Meta</td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="profile-cell">
+                            <span>Jane Doe</span>
+                        </div>
+                    </td>
+                    <td>2026</td>
+                    <td>Interested in SWE</td>
+                    <td>jd998@cornell.edu</td>
+                    <td>Interested in Amazon</td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="profile-cell">
+                            <span>Chris John</span>
+                        </div>
+                    </td>
+                    <td>2025</td>
+                    <td>Software Engineering</td>
+                    <td>cj885@cornell.edu</td>
+                    <td>Microsoft</td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+</div>
+
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-left">
+                <div class="logo">PathMatch</div>
+                <p>Developed for the Cornell CIS community</p>
+            </div>
+            <div class="footer-right">
+                <div class="footer-section">
+                    <h4>For Students</h4>
+                    <a href="#">Find a Mentor</a>
+                    <a href="#">Become a Mentor</a>
+                </div>
+                <div class="footer-section">
+                    <h4>About</h4>
+                    <a href="#">Mission</a>
+                    <a href="#">Contact</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Improving career outcomes for Information Science and ISST majors</p>
+        </div>
+    </footer>
+
+    <script src="base.js"></script>
+</body>
+</html>

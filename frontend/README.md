@@ -92,3 +92,11 @@ The design takes inspiration from Cornell Bowers College of Computing and Inform
 - Clean, professional aesthetic
 - Left-aligned layouts for academic sophistication
 
+## Current State
+The frontend has been developed into a homepage with a linked signup page that prompts users to answer relevant questions. From this are the following pages:
+- Mentor-specific survey page for collecting mentor bio, skillset, Information Science concentration
+- Mentee-specific survey page for collecting mentee bio, topics for discussion with mentors, Information Science concentration/planned concentration
+- Results page for displaying a mentee's algorithmic mentor pairings post-survey completion
+
+## Final Steps
+To finalize the frontend development, the surveys must be linked to the backend algorithm as to supply it with the relevant information necessary for mentor-mentee pairing. With this integration completed, the site will be useable by our desired population.
