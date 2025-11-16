@@ -119,10 +119,12 @@ Mentor profiles and availability.
 | id | Integer | Primary key |
 | user_id | Integer | Foreign key to users |
 | graduating_year | Integer | Year of graduation |
-| professional_experiences | Text (JSON) | Array of roles/experiences |
-| postgrad_plans | String(100) | 'industry', 'grad_school', 'other' |
 | info_concentration | String(100) | IS concentration |
-| technical_courses | Text (JSON) | Array of courses taken |
+| preferred_communication | String(50) | Communication preferences (e.g., 'email', 'zoom') |
+| advising_topics | Text (JSON) | Array of topics mentor can advise on |
+| career_pursuing | String(100) | Mentor's chosen career field |
+| experiences | Text | Prose bio on experiences (2-5 sentences) |
+| bio | Text | Personal bio (1-3 sentences) |
 | calendly_link | String(255) | Calendly scheduling URL |
 | availability_status | String(20) | 'available', 'dnd', 'unavailable' |
 | ratings_feedback | Text (JSON) | Array of feedback |
@@ -135,11 +137,12 @@ Mentee profiles and needs.
 | id | Integer | Primary key |
 | user_id | Integer | Foreign key to users |
 | graduating_year | Integer | Expected graduation year |
-| looking_for_career_advice | Boolean | Seeking career guidance |
+| info_concentration | String(100) | IS concentration |
+| preferred_communication | String(50) | Communication preferences (e.g., 'email', 'zoom') |
+| advising_needs | Text (JSON) | Array of topics mentee needs advice on |
 | careers_interested_in | Text (JSON) | Array of career paths |
-| looking_for_major_advice | Boolean | Seeking major/concentration advice |
-| concentrations_interested_in | Text (JSON) | Array of concentrations |
-| technical_courses_taken | Text (JSON) | Array of completed courses |
+| field_interests | Text | Prose bio on interests (2-5 sentences) |
+| bio | Text | Personal bio (1-3 sentences) |
 
 ### Matches Table
 Mentor-mentee pairings with compatibility scores.
@@ -167,19 +170,19 @@ Stores detailed survey data for matching.
 
 ## Matching Algorithm
 
-The matching algorithm (`services/matching_algorithm.py`) calculates compatibility based on:
+The matching algorithm (`services/matching_algorithm.py`) calculates a compatibility score from 0-100 based on a weighted average of three primary criteria. The score is normalized, and a default neutral score of 50 is assigned if no criteria match.
 
-1. **Career Path Alignment (40 points)**
-   - Matches mentee's career interests with mentor's professional experiences
-   - Weighs overlap between desired career paths and mentor's background
+1.  **Advising Topics Alignment (50 points)**
+    * **This is the primary matching criterion.** It compares the mentee's `advising_needs` (JSON list) against the mentor's `advising_topics` (JSON list).
+    * The score is based on the **percentage of the mentee's needs that the mentor can fulfill.** For example, if a mentee needs help with "Finding a job" and "Pursuing a PhD," and the mentor lists both, the mentee gets 100% (50 points) for this category, even if the mentor also lists other topics.
 
-2. **Concentration/Major Alignment (30 points)**
-   - Compares mentee's concentration interests with mentor's actual concentration
-   - Helps students get advice from those who've taken similar academic paths
+2.  **Career Path Alignment (30 points)**
+    * Compares the mentee's `careers_interested_in` (JSON list of strings) with the mentor's single `career_pursuing` (string).
+    * If the mentor's career (e.g., "Data Science") is present in the mentee's list of interests, this category receives the full 30 points.
 
-3. **Technical Course Overlap (30 points)**
-   - Uses Jaccard similarity to compare course histories
-   - Ensures mentors can advise on specific technical courses
+3.  **Concentration Alignment (20 points)**
+    * Performs a direct string comparison between the mentee's `info_concentration` and the mentor's `info_concentration`.
+    * If the strings match (e.g., "UX" == "UX"), this category receives the full 20 points.
 
 **Score Range:** 0-100, with higher scores indicating better compatibility.
 

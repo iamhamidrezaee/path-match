@@ -43,10 +43,12 @@ class Mentor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
     graduating_year = db.Column(db.Integer, nullable=False)
-    professional_experiences = db.Column(db.Text)  # JSON string of experiences/roles
-    postgrad_plans = db.Column(db.String(100))  # 'industry', 'grad_school', 'other'
-    info_concentration = db.Column(db.String(100))
-    technical_courses = db.Column(db.Text)  # JSON array of courses
+    info_concentration = db.Column(db.String(100)) 
+    preferred_communication = db.Column(db.String(50)) # e.g., 'email', 'zoom', 'in-person'
+    advising_topics = db.Column(db.Text) # JSON array of topics
+    career_pursuing = db.Column(db.String(100))
+    experiences = db.Column(db.Text)  # JSON string of experiences/roles
+    bio = db.Column(db.Text) # JSON string of personal bio
     calendly_link = db.Column(db.String(255))
     availability_status = db.Column(db.String(20), default='available')  # 'available', 'dnd', 'unavailable'
     ratings_feedback = db.Column(db.Text)  # JSON array of feedback
@@ -81,11 +83,14 @@ class Mentee(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
     graduating_year = db.Column(db.Integer, nullable=False)
-    looking_for_career_advice = db.Column(db.Boolean, default=False)
+    info_concentration = db.Column(db.String(100))
+    preferred_communication = db.Column(db.String(50))  # e.g., 'email', 'zoom', 'in-person'
+    advising_needs = db.Column(db.Text)  # JSON array of needs/topics
+    # looking_for_career_advice = db.Column(db.Boolean, default=False)
     careers_interested_in = db.Column(db.Text)  # JSON array of career paths
-    looking_for_major_advice = db.Column(db.Boolean, default=False)
-    concentrations_interested_in = db.Column(db.Text)  # JSON array of concentrations
-    technical_courses_taken = db.Column(db.Text)  # JSON array of courses
+    # looking_for_major_advice = db.Column(db.Boolean, default=False)
+    field_interests = db.Column(db.Text)
+    bio = db.Column(db.Text)  # JSON string of personal bio
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     

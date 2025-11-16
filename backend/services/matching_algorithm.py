@@ -2,66 +2,79 @@ import json
 
 def calculate_compatibility(mentee, mentor):
     """
-    Calculate compatibility score between mentee and mentor
+    Calculate compatibility score between mentee and mentor based on the new models.
     
-    Returns a score between 0 and 100
+    Returns a score between 0 and 100, weighted as follows:
+    - 50% for Advising Topics match
+    - 30% for Career Path match
+    - 20% for Concentration match
     """
     score = 0
     max_score = 0
     
-    # Parse JSON fields
+    # 1. Parse JSON fields from Text columns
     try:
+        # Mentee fields
+        mentee_needs = json.loads(mentee.advising_needs) if mentee.advising_needs else []
         mentee_careers = json.loads(mentee.careers_interested_in) if mentee.careers_interested_in else []
-        mentee_concentrations = json.loads(mentee.concentrations_interested_in) if mentee.concentrations_interested_in else []
-        mentee_courses = json.loads(mentee.technical_courses_taken) if mentee.technical_courses_taken else []
         
-        mentor_experiences = json.loads(mentor.professional_experiences) if mentor.professional_experiences else []
-        mentor_courses = json.loads(mentor.technical_courses) if mentor.technical_courses else []
+        # Mentor fields
+        mentor_topics = json.loads(mentor.advising_topics) if mentor.advising_topics else []
     except json.JSONDecodeError:
         # If JSON parsing fails, use empty lists
+        mentee_needs = []
         mentee_careers = []
-        mentee_concentrations = []
-        mentee_courses = []
-        mentor_experiences = []
-        mentor_courses = []
-    
-    # 1. Career path alignment (40 points)
-    if mentee.looking_for_career_advice and mentee_careers and mentor_experiences:
-        max_score += 40
-        # Check if mentor's experiences align with mentee's career interests
-        career_matches = sum(1 for career in mentee_careers 
-                           if any(career.lower() in exp.lower() for exp in mentor_experiences))
-        if career_matches > 0:
-            score += min(40, (career_matches / len(mentee_careers)) * 40)
-    
-    # 2. Concentration/Major alignment (30 points)
-    if mentee.looking_for_major_advice and mentee_concentrations and mentor.info_concentration:
-        max_score += 30
-        # Check if mentor's concentration matches mentee's interests
-        concentration_matches = sum(1 for conc in mentee_concentrations 
-                                   if conc.lower() in mentor.info_concentration.lower())
-        if concentration_matches > 0:
-            score += min(30, (concentration_matches / len(mentee_concentrations)) * 30)
-    
-    # 3. Technical course overlap (30 points)
-    if mentee_courses and mentor_courses:
-        max_score += 30
-        # Calculate Jaccard similarity for courses
-        mentee_courses_set = set(course.lower() for course in mentee_courses)
-        mentor_courses_set = set(course.lower() for course in mentor_courses)
+        mentor_topics = []
+
+    # --- Matching Logic ---
+
+    # 1. Advising Topics Alignment (Weight: 50 points)
+    # Scores based on the % of the mentee's needs that the mentor can fulfill.
+    if mentee_needs:
+        max_score += 50
         
-        intersection = len(mentee_courses_set & mentor_courses_set)
-        union = len(mentee_courses_set | mentor_courses_set)
+        # Use sets for efficient, case-insensitive comparison
+        mentee_needs_set = set(need.lower().strip() for need in mentee_needs)
+        mentor_topics_set = set(topic.lower().strip() for topic in mentor_topics)
         
-        if union > 0:
-            jaccard_score = intersection / union
-            score += jaccard_score * 30
+        # Find how many of the mentee's needs the mentor can fulfill
+        matches_found = mentee_needs_set.intersection(mentor_topics_set)
+        
+        # Calculate percentage of mentee's needs met
+        if mentee_needs_set: # Avoid division by zero
+            match_percentage = len(matches_found) / len(mentee_needs_set)
+            score += match_percentage * 50
+
+    # 2. Career Path Alignment (Weight: 30 points)
+    # Matches mentee's list of interests (JSON) vs. mentor's single career (string)
+    if mentee_careers and mentor.career_pursuing:
+        max_score += 30
+        
+        mentor_career_lower = mentor.career_pursuing.lower().strip()
+        mentee_careers_lower = [career.lower().strip() for career in mentee_careers]
+        
+        # Give full points if the mentor's career is in the mentee's list of interests
+        if mentor_career_lower in mentee_careers_lower:
+            score += 30 
+
+    # 3. Concentration Alignment (Weight: 20 points)
+    # Simple string match for Information Science concentration
+    if mentee.info_concentration and mentor.info_concentration:
+        max_score += 20
+        mentee_conc = mentee.info_concentration.lower().strip()
+        mentor_conc = mentor.info_concentration.lower().strip()
+
+        # Give points if they match. This also handles "I don't know" matching "I don't know"
+        if mentee_conc == mentor_conc:
+            score += 20
     
-    # Normalize score to 0-100 range
+    # --- Normalization ---
+    # Normalize the final score to be out of 100
     if max_score > 0:
         normalized_score = (score / max_score) * 100
     else:
-        normalized_score = 50  # Default neutral score if no criteria matched
+        # Default neutral score if no criteria matched (e.g., mentee left all fields blank)
+        normalized_score = 50  
     
     return round(normalized_score, 2)
 
@@ -81,6 +94,7 @@ def get_top_matches(mentee, mentors, limit=10):
     matches = []
     
     for mentor in mentors:
+        # Only match with mentors who are available
         if mentor.availability_status == 'available':
             score = calculate_compatibility(mentee, mentor)
             matches.append((mentor, score))
@@ -89,4 +103,3 @@ def get_top_matches(mentee, mentors, limit=10):
     matches.sort(key=lambda x: x[1], reverse=True)
     
     return matches[:limit]
-
