@@ -30,7 +30,17 @@ load_dotenv()
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///pathmatch.db')
+# Database configuration - Use SQLite for simplicity (demo mode)
+# Always use SQLite with an absolute path to the instance folder
+basedir = os.path.abspath(os.path.dirname(__file__))
+instance_path = os.path.join(basedir, 'instance')
+
+# Ensure instance directory exists
+if not os.path.exists(instance_path):
+    os.makedirs(instance_path)
+
+db_path = os.path.join(instance_path, 'pathmatch.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'jwt-secret-key-change-in-production')
@@ -864,9 +874,13 @@ if __name__ == '__main__':
     # Initialize database on first run
     with app.app_context():
         db.create_all()
+        print(f"Database ready at: {db_path}")
+    
+    print("Starting PathMatch API server...")
+    print("API available at: http://localhost:5000")
     
     app.run(
-        host=os.getenv('FLASK_HOST', '0.0.0.0'),
-        port=int(os.getenv('FLASK_PORT', 5000)),
-        debug=os.getenv('FLASK_ENV') == 'development'
+        host='0.0.0.0',
+        port=5000,
+        debug=True  # Demo mode - always enable debug
     )

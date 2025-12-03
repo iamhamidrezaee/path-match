@@ -25,113 +25,132 @@
         </div>
     </nav>
 
-    <div class="split-layout">
-        <div class="form-section">
-            <h1 class="formheader">Find a Mentor</h1>
-            <p class="form-subtitle">Tell us about yourself and what you're looking for.</p>
+    <div class="auth-page">
+        <div class="auth-container">
+            <div class="auth-form-section">
+                <div class="auth-header">
+                    <a href="index.html" class="logo">PathMatch</a>
+                    <h1>Find a Mentor</h1>
+                    <p>Tell us about yourself and what you're looking for.</p>
+                </div>
             
-            <form id="mentee-signup-form">
-                <!-- Account Info -->
-                <div class="form-group">
-                    <label class="questions" for="name">Name (First and Last)</label>
-                    <input type="text" id="name" name="name" required>
-                </div>
+                <form class="auth-form" id="mentee-signup-form">
+                    <!-- Account Info -->
+                    <div class="form-field">
+                        <label for="name">Name (First and Last)</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
 
-                <div class="form-group">
-                    <label class="questions" for="netid">Cornell NetID</label>
-                    <input type="text" id="netid" name="netid" required>
-                </div>
+                    <div class="form-field">
+                        <label for="netid">Cornell NetID</label>
+                        <input type="text" id="netid" name="netid" required>
+                    </div>
 
-                <div class="form-group">
-                    <label class="questions" for="email">Email</label>
-                    <input type="text" id="email" name="email" required>
-                </div>
+                    <div class="form-field">
+                        <label for="email">Email</label>
+                        <input type="text" id="email" name="email" required>
+                    </div>
 
-                <div class="form-group">
-                    <label class="questions" for="password">Password</label>
-                    <input type="password" id="password" name="password" required style="width: 100%; padding: 10px; margin-bottom: 8px; border-radius: 6px; border: 1px solid #ccc;">
-                </div>
+                    <div class="form-field">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
 
-                <div class="form-group">
-                    <label class="questions">What is your graduation year?</label>
-                    <select id="gradYear" name="gradYear" required>
-                        <option value="">Select...</option>
-                        <option value="2025">2025</option>
-                        <option value="2026">2026</option>
-                        <option value="2027">2027</option>
-                        <option value="2028">2028</option>
-                        <option value="2029">2029</option>
-                    </select>
-                </div>
+                    <div class="form-field">
+                        <label>What is your graduation year?</label>
+                        <select id="gradYear" name="gradYear" required>
+                            <option value="">Select...</option>
+                            <option value="2025">2025</option>
+                            <option value="2026">2026</option>
+                            <option value="2027">2027</option>
+                            <option value="2028">2028</option>
+                            <option value="2029">2029</option>
+                        </select>
+                    </div>
 
-                <div class="form-group">
-                    <label class="questions">What is your concentration or planned concentration?</label>
-                    <select id="concentration" name="concentration" required>
-                        <option value="">Select...</option>
-                        <option value="Behavioral Science">Behavioral Science</option>
-                        <option value="Data Science">Data Science</option>
-                        <option value="Digital Culture and Production">Digital Culture and Production</option>
-                        <option value="Information Ethics, Law, and Policy">Information Ethics, Law, and Policy</option>
-                        <option value="Interactive Technologies">Interactive Technologies</option>
-                        <option value="Networks, Crowds, and Markets">Networks, Crowds, and Markets</option>
-                        <option value="UX">UX (User Experience)</option>
-                        <option value="I don't know">I don’t know</option>
-                    </select>
-                </div>
+                    <div class="form-field">
+                        <label>What is your concentration or planned concentration?</label>
+                        <select id="concentration" name="concentration" required>
+                            <option value="">Select...</option>
+                            <option value="Behavioral Science">Behavioral Science</option>
+                            <option value="Data Science">Data Science</option>
+                            <option value="Digital Culture and Production">Digital Culture and Production</option>
+                            <option value="Information Ethics, Law, and Policy">Information Ethics, Law, and Policy</option>
+                            <option value="Interactive Technologies">Interactive Technologies</option>
+                            <option value="Networks, Crowds, and Markets">Networks, Crowds, and Markets</option>
+                            <option value="UX">UX (User Experience)</option>
+                            <option value="I don't know">I don’t know</option>
+                        </select>
+                    </div>
 
-                <!-- Survey Questions -->
-                <div class="form-group">
-                    <label class="questions">Which of the following are you seeking advice on? (Select all that apply)</label>
-                    <label><input type="checkbox" name="seeking[]" value="job"> Finding a job</label><br>
-                    <label><input type="checkbox" name="seeking[]" value="mba"> Pursuing an MBA</label><br>
-                    <label><input type="checkbox" name="seeking[]" value="phd"> Pursuing a PhD</label><br>
-                    <label><input type="checkbox" name="seeking[]" value="masters-it"> Pursuing a Master's in Information Science or Tech</label><br>
-                    <label><input type="checkbox" name="seeking[]" value="internship"> Finding an internship</label><br>
-                    <label><input type="checkbox" name="seeking[]" value="major"> Learning more about the major</label>
-                    <p id="seeking-error" style="color:red; display:none;">Please select at least one option.</p>
-                </div>
+                    <!-- Survey Questions -->
+                    <div class="form-field">
+                        <label>Which of the following are you seeking advice on? (Select all that apply)</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="seeking[]" value="job"> Finding a job</label>
+                            <label><input type="checkbox" name="seeking[]" value="mba"> Pursuing an MBA</label>
+                            <label><input type="checkbox" name="seeking[]" value="phd"> Pursuing a PhD</label>
+                            <label><input type="checkbox" name="seeking[]" value="masters-it"> Pursuing a Master's in Information Science or Tech</label>
+                            <label><input type="checkbox" name="seeking[]" value="internship"> Finding an internship</label>
+                            <label><input type="checkbox" name="seeking[]" value="major"> Learning more about the major</label>
+                        </div>
+                        <p id="seeking-error" style="color:red; display:none; font-size: 0.8rem; margin-top: 0.5rem;">Please select at least one option.</p>
+                    </div>
 
-                <div class="form-group">
-                    <label class="questions">What field of Information Science do you want to pursue or learn more about?</label>
-                    <label><input type="checkbox" name="fields[]" value="quant-finance"> Quant or Finance</label><br>
-                    <label><input type="checkbox" name="fields[]" value="it"> IT</label><br>
-                    <label><input type="checkbox" name="fields[]" value="academia-research"> Academia or Research</label><br>
-                    <label><input type="checkbox" name="fields[]" value="ux-ui"> UX or UI</label><br>
-                    <label><input type="checkbox" name="fields[]" value="management"> Management</label><br>
-                    <label><input type="checkbox" name="fields[]" value="data-science"> Data Science</label><br>
-                    <label><input type="checkbox" name="fields[]" value="programming"> Programming</label><br>
-                    <label><input type="checkbox" name="fields[]" value="entrepreneurship"> Starting your own business</label><br>
-                    <label><input type="checkbox" name="fields[]" value="not-sure"> Not sure</label>
-                    <p id="fields-error" style="color:red; display:none;">Please select at least one option.</p>
-                </div>
+                    <div class="form-field">
+                        <label>What field of Information Science do you want to pursue or learn more about?</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="fields[]" value="quant-finance"> Quant or Finance</label>
+                            <label><input type="checkbox" name="fields[]" value="it"> IT</label>
+                            <label><input type="checkbox" name="fields[]" value="academia-research"> Academia or Research</label>
+                            <label><input type="checkbox" name="fields[]" value="ux-ui"> UX or UI</label>
+                            <label><input type="checkbox" name="fields[]" value="management"> Management</label>
+                            <label><input type="checkbox" name="fields[]" value="data-science"> Data Science</label>
+                            <label><input type="checkbox" name="fields[]" value="programming"> Programming</label>
+                            <label><input type="checkbox" name="fields[]" value="entrepreneurship"> Starting your own business</label>
+                            <label><input type="checkbox" name="fields[]" value="not-sure"> Not sure</label>
+                        </div>
+                        <p id="fields-error" style="color:red; display:none; font-size: 0.8rem; margin-top: 0.5rem;">Please select at least one option.</p>
+                    </div>
 
-                <div class="form-group">
-                    <label class="questions">What career roles are you interested in? (e.g. Product Manager, Data Scientist)</label>
-                    <input type="text" name="careers" placeholder="Separate with commas" required>
-                </div>
+                    <div class="form-field">
+                        <label>What career roles are you interested in? (e.g. Product Manager, Data Scientist)</label>
+                        <input type="text" name="careers" placeholder="Separate with commas" required>
+                    </div>
 
-                <div class="form-group">
-                    <label class="questions">Tell us a bit about yourself and your interests (Bio)</label>
-                    <textarea name="bio" rows="4" required style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc; box-sizing:border-box;"></textarea>
-                </div>
+                    <div class="form-field">
+                        <label>Tell us a bit about yourself and your interests (Bio)</label>
+                        <textarea name="bio" rows="4" required></textarea>
+                    </div>
 
-                <div class="form-group">
-                     <label class="questions">How would you prefer to correspond?</label>
-                    <label><input type="checkbox" name="correspondence" value="Zoom"> Zoom</label><br>
-                    <label><input type="checkbox" name="correspondence" value="In person"> In person</label><br>
-                    <label><input type="checkbox" name="correspondence" value="Email"> Email</label>
-                    <p id="correspondence-error" style="color:red; display:none;">Please select at least one option.</p>
-                </div>
+                    <div class="form-field">
+                         <label>How would you prefer to correspond?</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="correspondence" value="Zoom"> Zoom</label>
+                            <label><input type="checkbox" name="correspondence" value="In person"> In person</label>
+                            <label><input type="checkbox" name="correspondence" value="Email"> Email</label>
+                        </div>
+                        <p id="correspondence-error" style="color:red; display:none; font-size: 0.8rem; margin-top: 0.5rem;">Please select at least one option.</p>
+                    </div>
 
-                <button class="btn-primary" type="submit" style="width: 100%; margin-top: 20px;">Create Account</button>
-            </form>
-        </div>
-        
-        <div class="visual-section">
-            <canvas id="mentee-canvas" class="visual-canvas"></canvas>
-            <div class="visual-content">
-                <h2>Begin Your Journey</h2>
-                <p>Connect with seniors who have walked the path you're on.</p>
+                    <button class="btn-primary" type="submit" style="width: 100%; margin-top: 1rem;">Create Account</button>
+                </form>
+            </div>
+            
+            <div class="auth-visual">
+                <div class="auth-visual-pattern"></div>
+                <div class="auth-visual-content">
+                    <h2 style="color: white;">Begin Your Journey</h2>
+                    <p style="color: rgba(255,255,255,0.9);">Connect with seniors who have walked the path you're on.</p>
+                    <div class="auth-visual-words">
+                        <span>Discovery</span>
+                        <span>Learning</span>
+                        <span>Career</span>
+                        <span>Future</span>
+                        <span>Cornell</span>
+                        <span>Path</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

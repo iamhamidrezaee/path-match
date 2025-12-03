@@ -32,55 +32,56 @@
 
     <main id="main">
         <section class="hero">
-            <canvas id="hero-canvas" class="hero-canvas"></canvas>
-            <div class="hero-accent"></div>
+            <div class="hero-pattern"></div>
             <div class="hero-content reveal">
                 <span class="hero-eyebrow">Cornell Information Science</span>
-                <h1>Your path forward,<br>guided by those<br>who've walked it.</h1>
-                <p class="hero-subtitle">Connect with Cornell CIS seniors for personalized<br>career and course guidance.</p>
+                <h1>Your path forward, guided by those who've walked it.</h1>
+                <p class="hero-subtitle">Connect with Cornell CIS seniors for personalized career advice, course planning, and mentorship.</p>
                 <div class="hero-actions">
-                    <button id="signup" class="btn-large btn-primary">Find a Mentor</button>
-                    <button id="signup1" class="btn-large btn-secondary">Become a Mentor</button>
+                    <button id="signup" class="btn-large btn-primary" onclick="window.location.href='get-started.html'">Get Started</button>
+                    <button id="signup1" class="btn-large btn-secondary" onclick="window.location.href='#how-it-works'">How It Works</button>
                 </div>
             </div>
         </section>
 
         <section id="about" class="stats">
             <div class="stats-container">
-                <div class="stat-item reveal">
+                <div class="stat-card reveal">
                     <div class="stat-number">140+</div>
                     <div class="stat-label">CIS graduates annually</div>
                 </div>
-                <div class="stat-item reveal">
+                <div class="stat-card reveal">
                     <div class="stat-number">10%</div>
                     <div class="stat-label">Still seeking employment at graduation</div>
                 </div>
-                <div class="stat-item reveal">
+                <div class="stat-card reveal">
                     <div class="stat-number">1:1</div>
-                    <div class="stat-label">Personalized mentorship</div>
+                    <div class="stat-label">Personalized mentorship matches</div>
                 </div>
             </div>
         </section>
 
         <section class="problem">
-            <canvas id="problem-canvas" class="problem-canvas"></canvas>
             <div class="section-content">
-                <h2>The Gap in Guidance</h2>
+                <div class="section-header">
+                    <h2>The Gap in Guidance</h2>
+                    <p class="section-lead">Why traditional advising isn't enough for today's tech landscape.</p>
+                </div>
                 <div class="problem-grid">
                     <div class="problem-card reveal">
-                        <div class="card-number">01</div>
+                        <div class="card-icon">📉</div>
                         <h3>Outdated Resources</h3>
-                        <p>Information doesn't reflect current industry trends and evolving tech sectors.</p>
+                        <p>Information often lags behind current industry trends and rapidly evolving tech sectors.</p>
                     </div>
                     <div class="problem-card reveal">
-                        <div class="card-number">02</div>
+                        <div class="card-icon">💬</div>
                         <h3>Generic Advice</h3>
-                        <p>Guidance is too broad to address specific career paths and individual goals.</p>
+                        <p>General guidance is too broad to address specific career paths and individual goals.</p>
                     </div>
                     <div class="problem-card reveal">
-                        <div class="card-number">03</div>
+                        <div class="card-icon">⏰</div>
                         <h3>Late Realization</h3>
-                        <p>Students discover they've taken the wrong courses too late in their journey.</p>
+                        <p>Students often discover they've taken the wrong courses too late in their academic journey.</p>
                     </div>
                 </div>
             </div>
@@ -90,20 +91,20 @@
             <div class="section-content">
                 <div class="features-header">
                     <h2>How PathMatch Works</h2>
-                    <p class="section-description">Three simple steps to connect with your mentor</p>
+                    <p class="section-description">Three simple steps to connect with your mentor.</p>
                 </div>
                 <div class="features-grid">
-                    <div class="feature-item reveal">
+                    <div class="feature-card reveal">
                         <div class="feature-number">01</div>
                         <h3>Share Your Goals</h3>
-                        <p>Complete a brief survey about your career interests, course plans, and what you're looking for in a mentor.</p>
+                        <p>Complete a brief survey about your career interests, course plans, and what you're looking for.</p>
                     </div>
-                    <div class="feature-item reveal">
+                    <div class="feature-card reveal">
                         <div class="feature-number">02</div>
                         <h3>Get Matched</h3>
                         <p>Our algorithm connects you with graduating seniors whose experiences align with your aspirations.</p>
                     </div>
-                    <div class="feature-item reveal">
+                    <div class="feature-card reveal">
                         <div class="feature-number">03</div>
                         <h3>Schedule & Connect</h3>
                         <p>Book a meeting directly through integrated Calendly scheduling—no back-and-forth emails.</p>
@@ -113,11 +114,11 @@
         </section>
 
         <section class="cta">
-            <canvas id="cta-canvas" class="cta-canvas"></canvas>
+            <div class="cta-pattern"></div>
             <div class="cta-content reveal">
-                <h2>Ready to find<br>your path?</h2>
-                <p>Join Cornell CIS students making informed<br>decisions about their future.</p>
-                <button class="btn-large btn-primary" onclick="window.location.href='get-started.html'">Get Started Today</button>
+                <h2>Ready to find your path?</h2>
+                <p>Join Cornell CIS students making informed decisions about their future.</p>
+                <button class="btn-large btn-primary-inverted" onclick="window.location.href='get-started.html'">Get Started Today</button>
             </div>
         </section>
     </main>
