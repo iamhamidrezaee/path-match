@@ -8,7 +8,7 @@
     <title>PathMatch — Your Matches</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <style>
         .matches-page {
@@ -65,7 +65,8 @@
         }
 
         .page-header h1 {
-            font-size: 2rem;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 2.25rem;
             color: var(--text-primary);
             margin-bottom: 0.5rem;
         }
@@ -701,8 +702,8 @@
                 document.getElementById('mentee-name-display').textContent = menteeName.split(' ')[0];
             }
 
-            // Load profile from localStorage
-            loadProfile();
+            // Load profile from localStorage (and optionally refresh from API)
+            await loadProfile();
 
             // Load matches
             if (isDemo || !localStorage.getItem('menteeId')) {
@@ -712,11 +713,52 @@
             }
         });
 
-        function loadProfile() {
+        async function loadProfile() {
+            // First try to fetch from API if we have a token
+            const token = localStorage.getItem('accessToken');
+            
+            if (token) {
+                try {
+                    // Fetch user info
+                    const userRes = await fetch(`${API_BASE}/api/auth/me`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    
+                    if (userRes.ok) {
+                        const userData = await userRes.json();
+                        localStorage.setItem('menteeName', userData.user.name);
+                    }
+                    
+                    // Fetch mentee profile
+                    const profileRes = await fetch(`${API_BASE}/api/mentees/profile`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    
+                    if (profileRes.ok) {
+                        const profileData = await profileRes.json();
+                        const mentee = profileData.mentee;
+                        
+                        // Update localStorage with fresh data
+                        localStorage.setItem('menteeConcentration', mentee.info_concentration || '');
+                        localStorage.setItem('menteeCareers', JSON.parse(mentee.careers_interested_in || '[]').join(', '));
+                        localStorage.setItem('menteeNeeds', mentee.advising_needs || '[]');
+                        localStorage.setItem('menteeId', mentee.id);
+                    }
+                } catch (e) {
+                    console.log('Could not fetch profile from API, using localStorage');
+                }
+            }
+            
+            // Now render from localStorage (which may have been updated)
             const name = localStorage.getItem('menteeName') || 'Student';
             const concentration = localStorage.getItem('menteeConcentration') || 'Not specified';
             const careers = localStorage.getItem('menteeCareers') || 'Not specified';
-            const needs = JSON.parse(localStorage.getItem('menteeNeeds') || '[]');
+            let needs = [];
+            try {
+                needs = JSON.parse(localStorage.getItem('menteeNeeds') || '[]');
+            } catch (e) {
+                needs = [];
+            }
 
             document.getElementById('profile-name').textContent = name;
             document.getElementById('profile-concentration').textContent = concentration;

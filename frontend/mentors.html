@@ -8,7 +8,7 @@
     <title>PathMatch — Mentors</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <style>
         .mentee-welcome {
@@ -63,6 +63,7 @@
         }
         
         .mentors-header h1 {
+            font-family: 'Playfair Display', Georgia, serif;
             font-size: 2.5rem;
             color: var(--cornell-red);
             margin-bottom: 1rem;
@@ -527,7 +528,7 @@
                     <div class="mentor-tags">
                         ${(mentor.tags || ['Mentorship']).map(tag => `<span class="tag">${tag}</span>`).join('')}
                     </div>
-                    <button class="btn-primary mentor-action" onclick="openModal('${mentor.name.replace(/'/g, "\\'")}')">Connect</button>
+                    <button class="btn-primary mentor-action" onclick='openModal(${JSON.stringify(mentor).replace(/'/g, "&#39;")})'>Connect</button>
                 </div>
             `;
             return card;
@@ -589,22 +590,27 @@
         }
 
         // Modal Logic
-        window.openModal = function(name) {
-            const mentor = hardcodedMentors.find(m => m.name === name) || { name, role: 'Mentor', bio: 'Ready to help guide your journey.' };
+        window.openModal = function(mentorData) {
+            // Handle both string (name) and object (full mentor data)
+            let mentor;
+            if (typeof mentorData === 'string') {
+                mentor = hardcodedMentors.find(m => m.name === mentorData) || { name: mentorData, role: 'Mentor', bio: 'Ready to help guide your journey.' };
+            } else {
+                mentor = mentorData;
+            }
+            
             const initials = getInitials(mentor.name);
             
             document.getElementById('modal-mentor-name').textContent = mentor.name;
-            document.getElementById('modal-role').textContent = mentor.role;
-            document.getElementById('modal-bio').textContent = mentor.bio;
+            document.getElementById('modal-role').textContent = mentor.role || mentor.career_pursuing || 'Mentor';
+            document.getElementById('modal-bio').textContent = mentor.bio || 'Ready to help guide your academic and career journey.';
             document.getElementById('modal-initials').textContent = initials;
             
             // Set avatar image if available
             const avatarEl = document.getElementById('modal-avatar');
-            if (mentor.image) {
-                avatarEl.innerHTML = `<img src="images/${mentor.image}" alt="${mentor.name}" onerror="this.outerHTML='<span>${initials}</span>'">`;
-            } else {
-                avatarEl.innerHTML = `<span>${initials}</span>`;
-            }
+            const firstName = mentor.name.split(' ')[0];
+            const imageSrc = mentor.image || `${firstName}.jpeg`;
+            avatarEl.innerHTML = `<img src="images/${imageSrc}" alt="${mentor.name}" onerror="this.outerHTML='<span>${initials}</span>'">`;
             
             modalContent.style.display = 'block';
             successMsg.style.display = 'none';
