@@ -256,14 +256,15 @@ body {
 
 .problem-card {
     padding: 2.5rem;
-    background: transparent;
-    border-left: 3px solid var(--cornell-red);
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     transition: all 0.3s ease;
 }
 
 .problem-card:hover {
-    transform: translateX(8px);
-    border-left-width: 4px;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
 }
 
 .card-number {
@@ -979,7 +980,7 @@ thead {
 
 .stat-card.highlight {
     border-color: var(--cornell-red);
-    background: linear-gradient(to bottom right, var(--white), rgba(179, 27, 27, 0.03));
+    background: var(--white);
 }
 
 .stat-card .stat-value {

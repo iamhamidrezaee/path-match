@@ -132,6 +132,9 @@
 
     <script src="base.js"></script>
     <script>
+        // API Configuration
+        const API_BASE = 'http://localhost:5000';
+
         // Init canvas
         document.addEventListener('DOMContentLoaded', () => {
              if (typeof DotPattern !== 'undefined') {
@@ -159,6 +162,12 @@
             }
         }
 
+        // Get checked values from checkbox group
+        function getCheckedValues(name) {
+            const checkboxes = document.querySelectorAll(`input[name="${name}"]:checked`);
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
+
         document.getElementById("mentor-signup-form").addEventListener("submit", async function (e) {
             e.preventDefault();
             
@@ -169,7 +178,7 @@
                 return;
             }
 
-            // Get mentor info for dashboard
+            // Get mentor info
             const mentorName = document.getElementById('name').value;
             const mentorRole = document.querySelector('input[name="career"]').value;
             const mentorConcentration = document.getElementById('concentration').value;
@@ -179,9 +188,63 @@
             localStorage.setItem('mentorRole', mentorRole);
             localStorage.setItem('mentorConcentration', mentorConcentration);
 
-            // For demo: directly redirect to dashboard without API call
-            // (The frontend server doesn't support POST requests)
-            window.location.href = `mentor-dashboard.html?welcome=true&name=${encodeURIComponent(mentorName)}`;
+            // Build FormData for file upload support
+            const formData = new FormData();
+            formData.append('name', mentorName);
+            formData.append('net_id', document.getElementById('netid').value);
+            formData.append('email', document.getElementById('email').value);
+            formData.append('password', document.getElementById('password').value);
+            formData.append('gradYear', document.getElementById('gradYear').value);
+            formData.append('concentration', mentorConcentration);
+            formData.append('career', mentorRole);
+            formData.append('calendly', document.querySelector('input[name="calendly"]').value);
+            formData.append('bio', document.querySelector('textarea[name="bio"]').value);
+            
+            // Add topics as array
+            getCheckedValues('topics[]').forEach(topic => {
+                formData.append('topics[]', topic);
+            });
+            
+            // Add correspondence
+            getCheckedValues('correspondence').forEach(corr => {
+                formData.append('correspondence[]', corr);
+            });
+
+            // Add profile image if selected
+            const imageInput = document.getElementById('profileImage');
+            if (imageInput.files.length > 0) {
+                formData.append('profileImage', imageInput.files[0]);
+            }
+
+            // Try to call backend API
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/register-mentor`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Store auth token
+                    localStorage.setItem('accessToken', data.access_token);
+                    localStorage.setItem('mentorId', data.mentor_id);
+                    localStorage.setItem('userId', data.user?.id);
+                    
+                    // Redirect to dashboard
+                    window.location.href = `mentor-dashboard.html?welcome=true&name=${encodeURIComponent(mentorName)}`;
+                } else if (response.status === 409) {
+                    alert('This NetID is already registered. Please log in instead.');
+                } else {
+                    console.error('Registration failed:', data.error);
+                    // Fallback to demo mode
+                    window.location.href = `mentor-dashboard.html?welcome=true&name=${encodeURIComponent(mentorName)}`;
+                }
+            } catch (error) {
+                console.log('API unavailable, using demo mode:', error);
+                // Fallback to demo mode when backend is not running
+                window.location.href = `mentor-dashboard.html?welcome=true&name=${encodeURIComponent(mentorName)}`;
+            }
         });
     </script>
 </body>

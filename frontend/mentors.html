@@ -80,11 +80,11 @@
         .mentor-card {
             background: var(--white);
             border-radius: 12px;
-            border: 1px solid var(--border);
             overflow: hidden;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
         
         .mentor-card:hover {
@@ -97,6 +97,34 @@
             height: 200px;
             object-fit: cover;
             background-color: #f0f0f0;
+        }
+
+        /* Compatibility Score Badge */
+        .compatibility-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--white);
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .compatibility-badge .score {
+            color: var(--cornell-red);
+        }
+
+        .compatibility-badge.excellent .score { color: #2E7D32; }
+        .compatibility-badge.good .score { color: var(--cornell-red); }
+        .compatibility-badge.moderate .score { color: #F57C00; }
+
+        .mentor-image-container {
+            position: relative;
         }
 
         .mentor-image-placeholder {
@@ -471,17 +499,27 @@
             return name.split(' ').map(n => n[0]).join('').toUpperCase();
         }
 
-        function createMentorCard(mentor) {
+        function createMentorCard(mentor, score = null, quality = null) {
             const card = document.createElement('div');
             card.className = 'mentor-card';
             const initials = getInitials(mentor.name);
             const imgSrc = mentor.image ? `images/${mentor.image}` : '';
             
+            // Compatibility badge HTML
+            let badgeHtml = '';
+            if (score !== null) {
+                const qualityClass = quality ? quality.toLowerCase().replace(' match', '') : '';
+                badgeHtml = `<div class="compatibility-badge ${qualityClass}"><span class="score">${Math.round(score)}%</span> match</div>`;
+            }
+            
             card.innerHTML = `
-                ${imgSrc ? 
-                    `<img src="${imgSrc}" alt="${mentor.name}" class="mentor-image" onerror="this.outerHTML='<div class=\\'mentor-image-placeholder\\'>${initials}</div>'">` : 
-                    `<div class="mentor-image-placeholder">${initials}</div>`
-                }
+                <div class="mentor-image-container">
+                    ${imgSrc ? 
+                        `<img src="${imgSrc}" alt="${mentor.name}" class="mentor-image" onerror="this.outerHTML='<div class=\\'mentor-image-placeholder\\'>${initials}</div>'">` : 
+                        `<div class="mentor-image-placeholder">${initials}</div>`
+                    }
+                    ${badgeHtml}
+                </div>
                 <div class="mentor-info">
                     <div class="mentor-name">${mentor.name}</div>
                     <div class="mentor-role">${mentor.role || 'Information Science Senior'}</div>
@@ -496,12 +534,40 @@
         }
 
         async function loadMentors() {
-            // Render hardcoded mentors
+            const API_BASE = 'http://localhost:5000';
+            const menteeId = localStorage.getItem('menteeId');
+            
+            // If mentee is logged in, try to get personalized matches
+            if (menteeId) {
+                try {
+                    const response = await fetch(`${API_BASE}/api/matches/find-for-mentee/${menteeId}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        // Render matches with scores
+                        data.matches.forEach(match => {
+                            const mentor = match.mentor;
+                            const firstName = mentor.name.split(' ')[0];
+                            grid.appendChild(createMentorCard({
+                                name: mentor.name,
+                                role: mentor.career_pursuing || mentor.info_concentration,
+                                tags: mentor.advising_topics ? JSON.parse(mentor.advising_topics) : ['Mentorship'],
+                                image: `${firstName}.jpeg`,
+                                bio: mentor.bio || 'Ready to help guide your academic and career journey.'
+                            }, match.compatibility_score, match.quality));
+                        });
+                        return; // Success - don't load hardcoded
+                    }
+                } catch (e) {
+                    console.log("Match API unavailable, falling back to standard view");
+                }
+            }
+            
+            // Fallback: Render hardcoded mentors (no scores)
             hardcodedMentors.forEach(m => grid.appendChild(createMentorCard(m)));
 
             // Try to fetch additional mentors from API
             try {
-                const response = await fetch('/api/mentors/');
+                const response = await fetch(`${API_BASE}/api/mentors`);
                 if (response.ok) {
                     const data = await response.json();
                     data.mentors.forEach(m => {

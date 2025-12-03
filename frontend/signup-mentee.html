@@ -138,6 +138,9 @@
 
     <script src="base.js"></script>
     <script>
+        // API Configuration
+        const API_BASE = 'http://localhost:5000';
+
         // Init canvas
         document.addEventListener('DOMContentLoaded', () => {
              if (typeof DotPattern !== 'undefined') {
@@ -165,6 +168,12 @@
             }
         }
 
+        // Get checked values from checkbox group
+        function getCheckedValues(name) {
+            const checkboxes = document.querySelectorAll(`input[name="${name}"]:checked`);
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
+
         document.getElementById("mentee-signup-form").addEventListener("submit", async function (e) {
             e.preventDefault();
             
@@ -176,16 +185,59 @@
                 return;
             }
 
-            // Save mentee info for display
-            const menteeName = document.getElementById('name').value;
-            const menteeConcentration = document.getElementById('concentration').value;
-            
-            localStorage.setItem('menteeName', menteeName);
-            localStorage.setItem('menteeConcentration', menteeConcentration);
+            // Collect form data
+            const formData = {
+                name: document.getElementById('name').value,
+                net_id: document.getElementById('netid').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                gradYear: document.getElementById('gradYear').value,
+                concentration: document.getElementById('concentration').value,
+                seeking: getCheckedValues('seeking[]'),
+                fields: getCheckedValues('fields[]'),
+                careers: document.querySelector('input[name="careers"]').value,
+                bio: document.querySelector('textarea[name="bio"]').value,
+                correspondence: getCheckedValues('correspondence')
+            };
 
-            // For demo: directly redirect to mentors page without API call
-            // (The frontend server doesn't support POST requests)
-            window.location.href = `mentors.html?welcome=true&name=${encodeURIComponent(menteeName)}`;
+            // Save mentee info for display
+            localStorage.setItem('menteeName', formData.name);
+            localStorage.setItem('menteeConcentration', formData.concentration);
+            localStorage.setItem('menteeBio', formData.bio);
+            localStorage.setItem('menteeCareers', formData.careers);
+            localStorage.setItem('menteeNeeds', JSON.stringify(formData.seeking));
+            localStorage.setItem('menteeFields', JSON.stringify(formData.fields));
+
+            // Try to call backend API
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/register-mentee`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Store auth token and mentee ID
+                    localStorage.setItem('accessToken', data.access_token);
+                    localStorage.setItem('menteeId', data.mentee_id);
+                    localStorage.setItem('userId', data.user?.id);
+                    
+                    // Redirect to matches page
+                    window.location.href = `matches.html?welcome=true&name=${encodeURIComponent(formData.name)}`;
+                } else if (response.status === 409) {
+                    alert('This NetID or email is already registered. Please log in instead.');
+                } else {
+                    console.error('Registration failed:', data.error);
+                    // Fallback to demo mode
+                    window.location.href = `matches.html?welcome=true&name=${encodeURIComponent(formData.name)}&demo=true`;
+                }
+            } catch (error) {
+                console.log('API unavailable, using demo mode:', error);
+                // Fallback to demo mode when backend is not running
+                window.location.href = `matches.html?welcome=true&name=${encodeURIComponent(formData.name)}&demo=true`;
+            }
         });
     </script>
 </body>
