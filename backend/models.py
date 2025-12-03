@@ -66,11 +66,13 @@ class Mentor(db.Model):
             'id': self.id,
             'user_id': self.user_id,
             'name': self.user.name,
+            'email': self.user.email,
             'graduating_year': self.graduating_year,
-            'professional_experiences': self.professional_experiences,
-            'postgrad_plans': self.postgrad_plans,
             'info_concentration': self.info_concentration,
-            'technical_courses': self.technical_courses,
+            'preferred_communication': self.preferred_communication,
+            'advising_topics': self.advising_topics,
+            'career_pursuing': self.career_pursuing,
+            'bio': self.bio,
             'calendly_link': self.calendly_link,
             'availability_status': self.availability_status
         }
@@ -105,12 +107,14 @@ class Mentee(db.Model):
             'id': self.id,
             'user_id': self.user_id,
             'name': self.user.name,
+            'email': self.user.email,
             'graduating_year': self.graduating_year,
-            'looking_for_career_advice': self.looking_for_career_advice,
+            'info_concentration': self.info_concentration,
+            'preferred_communication': self.preferred_communication,
+            'advising_needs': self.advising_needs,
             'careers_interested_in': self.careers_interested_in,
-            'looking_for_major_advice': self.looking_for_major_advice,
-            'concentrations_interested_in': self.concentrations_interested_in,
-            'technical_courses_taken': self.technical_courses_taken
+            'field_interests': self.field_interests,
+            'bio': self.bio
         }
 
 

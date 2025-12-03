@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PathMatch connects Cornell CIS students with graduating seniors for personalized mentorship.">
+    <meta name="theme-color" content="#B31B1B">
+    <title>PathMatch — Mentor Sign Up</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <nav class="nav" aria-label="Primary">
+        <div class="nav-content">
+            <a href="index.html" class="logo">PathMatch</a>
+            <div id="primary-navigation" class="nav-links">
+                <a href="index.html#about">About</a>
+                <a href="index.html#how-it-works">How It Works</a>
+                <a href="index.html" class="btn-primary">Back to Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="split-layout">
+        <div class="form-section">
+            <h1 class="formheader">Become a Mentor</h1>
+            <p class="form-subtitle">Share your experience and guide the next generation.</p>
+            
+            <form id="mentor-signup-form">
+                <!-- Account Info -->
+                <div class="form-group">
+                    <label class="questions" for="name">Name (First and Last)</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="questions" for="netid">Cornell NetID</label>
+                    <input type="text" id="netid" name="netid" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="questions" for="email">Email</label>
+                    <input type="text" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="questions" for="password">Password</label>
+                    <input type="password" id="password" name="password" required style="width: 100%; padding: 10px; margin-bottom: 8px; border-radius: 6px; border: 1px solid #ccc;">
+                </div>
+                
+                <div class="form-group">
+                    <label class="questions">Profile Image</label>
+                    <input type="file" id="profileImage" name="profileImage" accept="image/*" required>
+                    <p style="font-size: 0.8em; color: var(--text-secondary);">Upload a picture so mentees can recognize you.</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="questions">What is your graduation year?</label>
+                    <select id="gradYear" name="gradYear" required>
+                        <option value="">Select...</option>
+                        <option value="2024">2024</option>
+                        <option value="2025">2025</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="questions">What is your concentration?</label>
+                    <select id="concentration" name="concentration" required>
+                        <option value="">Select...</option>
+                        <option value="Behavioral Science">Behavioral Science</option>
+                        <option value="Data Science">Data Science</option>
+                        <option value="Digital Culture and Production">Digital Culture and Production</option>
+                        <option value="Information Ethics, Law, and Policy">Information Ethics, Law, and Policy</option>
+                        <option value="Interactive Technologies">Interactive Technologies</option>
+                        <option value="Networks, Crowds, and Markets">Networks, Crowds, and Markets</option>
+                        <option value="UX">UX (User Experience)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="questions">Current Role / Career Pursuing</label>
+                    <input type="text" name="career" placeholder="e.g. Product Manager at Tech Co." required>
+                </div>
+
+                <div class="form-group">
+                    <label class="questions">Calendly Link</label>
+                    <input type="text" name="calendly" placeholder="https://calendly.com/yourname" required>
+                </div>
+
+                <!-- Survey Questions -->
+                <div class="form-group">
+                    <label class="questions">Which of the following are you comfortable giving advice on?</label>
+                    <label><input type="checkbox" name="topics[]" value="job"> Finding a job</label><br>
+                    <label><input type="checkbox" name="topics[]" value="mba"> Pursuing an MBA</label><br>
+                    <label><input type="checkbox" name="topics[]" value="phd"> Pursuing a PhD</label><br>
+                    <label><input type="checkbox" name="topics[]" value="masters-it"> Pursuing a Master's in Information Science or Tech</label><br>
+                    <label><input type="checkbox" name="topics[]" value="internship"> Finding an internship</label><br>
+                    <label><input type="checkbox" name="topics[]" value="major"> Learning more about the major</label>
+                    <p id="topics-error" style="color:red; display:none;">Please select at least one option.</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="questions">Tell us about your background and experiences (Bio)</label>
+                    <textarea name="bio" rows="4" required style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc; box-sizing:border-box;"></textarea>
+                </div>
+
+                <div class="form-group">
+                     <label class="questions">Preferred Correspondence</label>
+                    <label><input type="checkbox" name="correspondence" value="Zoom"> Zoom</label><br>
+                    <label><input type="checkbox" name="correspondence" value="In person"> In person</label><br>
+                    <label><input type="checkbox" name="correspondence" value="Email"> Email</label>
+                    <p id="correspondence-error" style="color:red; display:none;">Please select at least one option.</p>
+                </div>
+
+                <button class="btn-primary" type="submit" style="width: 100%; margin-top: 20px;">Create Mentor Account</button>
+            </form>
+        </div>
+        
+        <div class="visual-section">
+            <canvas id="mentor-canvas" class="visual-canvas"></canvas>
+            <div class="visual-content">
+                <h2>Shape the Future</h2>
+                <p>Join a community of leaders helping students navigate their path.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="base.js"></script>
+    <script>
+        // Init canvas
+        document.addEventListener('DOMContentLoaded', () => {
+             if (typeof DotPattern !== 'undefined') {
+                new DotPattern('mentor-canvas', {
+                    dotSize: 2,
+                    spacing: 25,
+                    color: 'rgba(179, 27, 27, 0.15)',
+                    animationSpeed: 0.0003,
+                    waveAmplitude: 8
+                });
+            }
+        });
+
+        // Form Validation
+        function validateCheckboxGroup(groupName, errorId) {
+            const checkboxes = document.querySelectorAll(`input[name="${groupName}"]`);
+            const oneChecked = Array.from(checkboxes).some(cb => cb.checked);
+            const errorMsg = document.getElementById(errorId);
+            if (!oneChecked) {
+                errorMsg.style.display = "block";
+                return false;
+            } else {
+                errorMsg.style.display = "none";
+                return true;
+            }
+        }
+
+        document.getElementById("mentor-signup-form").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            
+            const validTopics = validateCheckboxGroup("topics[]", "topics-error");
+            const validCorr = validateCheckboxGroup("correspondence", "correspondence-error");
+
+            if (!validTopics || !validCorr) {
+                return;
+            }
+
+            // Get mentor info for dashboard
+            const mentorName = document.getElementById('name').value;
+            const mentorRole = document.querySelector('input[name="career"]').value;
+            const mentorConcentration = document.getElementById('concentration').value;
+            
+            // Save to localStorage for the dashboard
+            localStorage.setItem('mentorName', mentorName);
+            localStorage.setItem('mentorRole', mentorRole);
+            localStorage.setItem('mentorConcentration', mentorConcentration);
+
+            // For demo: directly redirect to dashboard without API call
+            // (The frontend server doesn't support POST requests)
+            window.location.href = `mentor-dashboard.html?welcome=true&name=${encodeURIComponent(mentorName)}`;
+        });
+    </script>
+</body>
+</html>
+

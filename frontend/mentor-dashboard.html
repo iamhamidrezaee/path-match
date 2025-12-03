@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PathMatch Mentor Dashboard - Manage your mentorship sessions">
+    <meta name="theme-color" content="#B31B1B">
+    <title>PathMatch — Mentor Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Dashboard Styles - Embedded for reliability */
+        .dashboard {
+            margin-top: 72px;
+            min-height: calc(100vh - 72px);
+            background: #FAFAFA;
+            padding: 2rem;
+        }
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .welcome-banner {
+            background: #B31B1B;
+            color: #fff;
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .welcome-content h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+        .welcome-content p { opacity: 0.9; font-size: 0.95rem; }
+        .welcome-close {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 1.75rem;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .dashboard-title { font-size: 2rem; color: #1A1A1A; margin-bottom: 0.25rem; }
+        .dashboard-subtitle { color: #6B6B6B; font-size: 1rem; }
+        .availability-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: #fff;
+            padding: 0.5rem;
+            border-radius: 10px;
+            border: 1px solid #E5E5E5;
+        }
+        .toggle-label { font-weight: 600; color: #6B6B6B; padding-left: 0.5rem; font-size: 0.9rem; }
+        .status-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: #6B6B6B;
+        }
+        .status-btn:hover { background: #FAFAFA; }
+        .status-btn.active { background: #B31B1B; color: #fff; }
+        #status-dnd.active { background: #6B6B6B; }
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #E5E5E5;
+            text-align: center;
+        }
+        .stat-card.highlight { border-color: #B31B1B; }
+        .stat-card .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #B31B1B;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        .stat-card .stat-name { font-size: 0.875rem; color: #6B6B6B; font-weight: 500; }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        .dashboard-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid #E5E5E5;
+            padding: 1.5rem;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+        .card-header h2 { font-size: 1.125rem; font-weight: 600; color: #1A1A1A; }
+        .edit-btn, .view-all {
+            background: transparent;
+            border: none;
+            color: #B31B1B;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .week-label { font-size: 0.875rem; color: #6B6B6B; }
+        .profile-content {
+            display: flex;
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #E5E5E5;
+        }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            min-width: 80px;
+            min-height: 80px;
+            max-width: 80px;
+            max-height: 80px;
+            border-radius: 50%;
+            background: #B31B1B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 600;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .profile-avatar img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .profile-info { flex: 1; }
+        .profile-name { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .profile-role { color: #B31B1B; font-weight: 500; margin-bottom: 0.5rem; }
+        .profile-meta { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .meta-item {
+            font-size: 0.85rem;
+            color: #6B6B6B;
+            background: #FAFAFA;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+        }
+        .profile-details { display: flex; flex-direction: column; gap: 0.75rem; }
+        .detail-row { display: flex; justify-content: space-between; align-items: center; }
+        .detail-label { font-size: 0.875rem; color: #6B6B6B; }
+        .detail-value { font-size: 0.875rem; color: #1A1A1A; font-weight: 500; }
+        .detail-value.link { color: #B31B1B; text-decoration: none; }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .calendar-day {
+            text-align: center;
+            padding: 0.75rem 0.5rem;
+            border-radius: 8px;
+            background: #FAFAFA;
+            position: relative;
+        }
+        .calendar-day.booked {
+            background: rgba(179, 27, 27, 0.08);
+            border: 1px solid rgba(179, 27, 27, 0.2);
+        }
+        .calendar-day.weekend { opacity: 0.5; background: transparent; }
+        .day-name {
+            display: block;
+            font-size: 0.7rem;
+            color: #6B6B6B;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+        .day-num { display: block; font-size: 1.25rem; font-weight: 600; color: #1A1A1A; }
+        .calendar-day.booked .day-num { color: #B31B1B; }
+        .day-indicator { width: 6px; height: 6px; border-radius: 50%; margin: 0.5rem auto 0; }
+        .day-indicator.free { background: #4CAF50; }
+        .day-indicator.has-booking { background: #B31B1B; }
+        .booking-count {
+            position: absolute;
+            top: 0.25rem;
+            right: 0.25rem;
+            background: #B31B1B;
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 600;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .calendar-legend { display: flex; gap: 1.5rem; justify-content: center; }
+        .legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: #6B6B6B; }
+        .legend-item .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .legend-item .dot.booked { background: #B31B1B; }
+        .legend-item .dot.free { background: #4CAF50; }
+        .connections-list { list-style: none; padding: 0; margin: 0; }
+        .connection-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.875rem 0;
+            border-bottom: 1px solid #E5E5E5;
+        }
+        .connection-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .connection-item:first-child { padding-top: 0; }
+        .connection-avatar {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            border-radius: 50%;
+            background: #FAFAFA;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #6B6B6B;
+        }
+        .connection-info { flex: 1; min-width: 0; }
+        .connection-name { display: block; font-weight: 600; font-size: 0.9375rem; margin-bottom: 0.125rem; }
+        .connection-detail { display: block; font-size: 0.8rem; color: #6B6B6B; }
+        .connection-status {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.625rem;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+        .connection-status.upcoming { background: rgba(179, 27, 27, 0.1); color: #B31B1B; }
+        .connection-status.scheduled { background: rgba(33, 150, 243, 0.1); color: #1976D2; }
+        .connection-status.completed { background: rgba(76, 175, 80, 0.1); color: #388E3C; }
+        .upcoming-card { grid-column: 1 / -1; }
+        .upcoming-list { display: flex; flex-direction: column; gap: 1rem; }
+        .upcoming-item {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.25rem;
+            background: #FAFAFA;
+            border-radius: 10px;
+        }
+        .upcoming-time { text-align: center; min-width: 80px; }
+        .time-day {
+            display: block;
+            font-size: 0.75rem;
+            color: #6B6B6B;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.125rem;
+        }
+        .time-hour { display: block; font-size: 1.125rem; font-weight: 700; color: #B31B1B; }
+        .upcoming-details { flex: 1; }
+        .upcoming-name { display: block; font-weight: 600; font-size: 1rem; margin-bottom: 0.25rem; }
+        .upcoming-topic { display: block; font-size: 0.875rem; color: #6B6B6B; }
+        .upcoming-action { text-decoration: none; font-size: 0.875rem; padding: 0.625rem 1.25rem; }
+        @media (max-width: 900px) {
+            .dashboard-header { flex-direction: column; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 600px) {
+            .dashboard { padding: 1rem; }
+            .stats-row { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+            .stat-card { padding: 1rem; }
+            .stat-card .stat-value { font-size: 1.75rem; }
+            .upcoming-item { flex-direction: column; text-align: center; gap: 1rem; }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="nav" aria-label="Primary">
+        <div class="nav-content">
+            <a href="index.html" class="logo">PathMatch</a>
+            <div class="nav-links">
+                <a href="index.html#about">About</a>
+                <a href="index.html" class="btn-secondary">Log Out</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="dashboard">
+        <div class="dashboard-container">
+            <!-- Welcome Banner -->
+            <div class="welcome-banner" id="welcome-banner">
+                <div class="welcome-content">
+                    <h1>Welcome to PathMatch!</h1>
+                    <p>Your mentor profile is all set up. Start connecting with mentees who need your guidance.</p>
+                </div>
+                <button class="welcome-close" onclick="dismissWelcome()">&times;</button>
+            </div>
+
+            <!-- Dashboard Header -->
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <h1 class="dashboard-title">Mentor Dashboard</h1>
+                    <p class="dashboard-subtitle">Manage your availability and mentee connections</p>
+                </div>
+                <div class="header-right">
+                    <div class="availability-toggle">
+                        <span class="toggle-label">Status:</span>
+                        <button class="status-btn active" id="status-available" onclick="setStatus('available')">Available</button>
+                        <button class="status-btn" id="status-dnd" onclick="setStatus('dnd')">Do Not Disturb</button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Stats Row -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-value">5</div>
+                    <div class="stat-name">Total Mentees</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3</div>
+                    <div class="stat-name">Sessions This Week</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2</div>
+                    <div class="stat-name">Upcoming Sessions</div>
+                </div>
+                <div class="stat-card highlight">
+                    <div class="stat-value">12</div>
+                    <div class="stat-name">Sessions Completed</div>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="dashboard-grid">
+                <!-- Profile Card -->
+                <section class="dashboard-card profile-card">
+                    <div class="card-header">
+                        <h2>Your Profile</h2>
+                        <button class="edit-btn">Edit</button>
+                    </div>
+                    <div class="profile-content">
+                        <div class="profile-avatar" id="profile-avatar">
+                            <img src="images/Hamid.jpeg" alt="Profile" onerror="this.style.display='none'; this.parentElement.innerHTML='<span>HM</span>';">
+                        </div>
+                        <div class="profile-info">
+                            <h3 class="profile-name" id="mentor-name">Hamid Rezaee</h3>
+                            <p class="profile-role" id="mentor-role">Data Science</p>
+                            <div class="profile-meta">
+                                <span class="meta-item">Class of 2025</span>
+                                <span class="meta-item">AI & Research</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Calendly</span>
+                            <a href="#" class="detail-value link" id="calendly-link">calendly.com/hamid-r</a>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Topics</span>
+                            <span class="detail-value">PhD Prep, Research, Data Science</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Calendar Card -->
+                <section class="dashboard-card calendar-card">
+                    <div class="card-header">
+                        <h2>This Week</h2>
+                        <span class="week-label">Dec 2 - Dec 8, 2024</span>
+                    </div>
+                    <div class="calendar-grid">
+                        <div class="calendar-day">
+                            <span class="day-name">Mon</span>
+                            <span class="day-num">2</span>
+                            <div class="day-indicator free"></div>
+                        </div>
+                        <div class="calendar-day booked">
+                            <span class="day-name">Tue</span>
+                            <span class="day-num">3</span>
+                            <div class="day-indicator has-booking"></div>
+                            <span class="booking-count">2</span>
+                        </div>
+                        <div class="calendar-day">
+                            <span class="day-name">Wed</span>
+                            <span class="day-num">4</span>
+                            <div class="day-indicator free"></div>
+                        </div>
+                        <div class="calendar-day booked">
+                            <span class="day-name">Thu</span>
+                            <span class="day-num">5</span>
+                            <div class="day-indicator has-booking"></div>
+                            <span class="booking-count">1</span>
+                        </div>
+                        <div class="calendar-day">
+                            <span class="day-name">Fri</span>
+                            <span class="day-num">6</span>
+                            <div class="day-indicator free"></div>
+                        </div>
+                        <div class="calendar-day weekend">
+                            <span class="day-name">Sat</span>
+                            <span class="day-num">7</span>
+                        </div>
+                        <div class="calendar-day weekend">
+                            <span class="day-name">Sun</span>
+                            <span class="day-num">8</span>
+                        </div>
+                    </div>
+                    <div class="calendar-legend">
+                        <span class="legend-item"><span class="dot booked"></span> Booked</span>
+                        <span class="legend-item"><span class="dot free"></span> Available</span>
+                    </div>
+                </section>
+
+                <!-- Recent Connections -->
+                <section class="dashboard-card connections-card">
+                    <div class="card-header">
+                        <h2>Recent Connections</h2>
+                        <span class="view-all">View All</span>
+                    </div>
+                    <ul class="connections-list">
+                        <li class="connection-item">
+                            <div class="connection-avatar">JS</div>
+                            <div class="connection-info">
+                                <span class="connection-name">Jessica Smith</span>
+                                <span class="connection-detail">Career Guidance · Dec 3</span>
+                            </div>
+                            <span class="connection-status upcoming">Upcoming</span>
+                        </li>
+                        <li class="connection-item">
+                            <div class="connection-avatar">MK</div>
+                            <div class="connection-info">
+                                <span class="connection-name">Michael Kim</span>
+                                <span class="connection-detail">PhD Advice · Dec 3</span>
+                            </div>
+                            <span class="connection-status upcoming">Upcoming</span>
+                        </li>
+                        <li class="connection-item">
+                            <div class="connection-avatar">AR</div>
+                            <div class="connection-info">
+                                <span class="connection-name">Aisha Rahman</span>
+                                <span class="connection-detail">Research · Dec 5</span>
+                            </div>
+                            <span class="connection-status scheduled">Scheduled</span>
+                        </li>
+                        <li class="connection-item">
+                            <div class="connection-avatar">TC</div>
+                            <div class="connection-info">
+                                <span class="connection-name">Tom Chen</span>
+                                <span class="connection-detail">Internship Tips · Nov 28</span>
+                            </div>
+                            <span class="connection-status completed">Completed</span>
+                        </li>
+                        <li class="connection-item">
+                            <div class="connection-avatar">LP</div>
+                            <div class="connection-info">
+                                <span class="connection-name">Lisa Park</span>
+                                <span class="connection-detail">Course Planning · Nov 25</span>
+                            </div>
+                            <span class="connection-status completed">Completed</span>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- Upcoming Sessions Detail -->
+                <section class="dashboard-card upcoming-card">
+                    <div class="card-header">
+                        <h2>Upcoming Sessions</h2>
+                    </div>
+                    <div class="upcoming-list">
+                        <div class="upcoming-item">
+                            <div class="upcoming-time">
+                                <span class="time-day">Today</span>
+                                <span class="time-hour">2:00 PM</span>
+                            </div>
+                            <div class="upcoming-details">
+                                <span class="upcoming-name">Jessica Smith</span>
+                                <span class="upcoming-topic">Career Guidance - Software Engineering paths</span>
+                            </div>
+                            <a href="#" class="upcoming-action btn-primary">Join Call</a>
+                        </div>
+                        <div class="upcoming-item">
+                            <div class="upcoming-time">
+                                <span class="time-day">Today</span>
+                                <span class="time-hour">4:30 PM</span>
+                            </div>
+                            <div class="upcoming-details">
+                                <span class="upcoming-name">Michael Kim</span>
+                                <span class="upcoming-topic">PhD Preparation - Application timeline</span>
+                            </div>
+                            <a href="#" class="upcoming-action btn-primary">Join Call</a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Check for welcome state (new signup)
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const isNewUser = urlParams.get('welcome') === 'true';
+            const welcomeBanner = document.getElementById('welcome-banner');
+            
+            if (!isNewUser) {
+                welcomeBanner.style.display = 'none';
+            }
+
+            // Load mentor info from URL or localStorage
+            const mentorName = urlParams.get('name') || localStorage.getItem('mentorName') || 'Hamid Rezaee';
+            const mentorRole = localStorage.getItem('mentorRole') || 'Data Science';
+            const mentorConcentration = localStorage.getItem('mentorConcentration') || 'Data Science';
+            
+            document.getElementById('mentor-name').textContent = mentorName;
+            
+            // Update role display
+            const roleEl = document.getElementById('mentor-role');
+            if (roleEl) {
+                roleEl.textContent = mentorRole;
+            }
+            
+            // Generate initials for avatar
+            const initials = mentorName.split(' ').map(n => n[0]).join('').toUpperCase();
+            const firstName = mentorName.split(' ')[0];
+            const avatarEl = document.getElementById('profile-avatar');
+            
+            if (avatarEl) {
+                // Try to load image based on first name
+                avatarEl.innerHTML = `<img src="images/${firstName}.jpeg" alt="${mentorName}" onerror="this.outerHTML='<span>${initials}</span>'">`;
+            }
+        });
+
+        function dismissWelcome() {
+            document.getElementById('welcome-banner').style.display = 'none';
+        }
+
+        function setStatus(status) {
+            const availBtn = document.getElementById('status-available');
+            const dndBtn = document.getElementById('status-dnd');
+            
+            if (status === 'available') {
+                availBtn.classList.add('active');
+                dndBtn.classList.remove('active');
+            } else {
+                dndBtn.classList.add('active');
+                availBtn.classList.remove('active');
+            }
+
+            // In a real app, this would call the API
+            console.log('Status set to:', status);
+        }
+    </script>
+</body>
+</html>
+

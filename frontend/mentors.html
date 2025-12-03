@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PathMatch connects Cornell CIS students with graduating seniors for personalized mentorship.">
+    <meta name="theme-color" content="#B31B1B">
+    <title>PathMatch — Mentors</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .mentee-welcome {
+            max-width: 1200px;
+            margin: 100px auto 0;
+            padding: 1.5rem 2rem;
+        }
+
+        .mentee-welcome-banner {
+            background: var(--cornell-red);
+            color: var(--white);
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mentee-welcome-banner h2 {
+            font-size: 1.375rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .mentee-welcome-banner p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .mentee-welcome-close {
+            background: transparent;
+            border: none;
+            color: var(--white);
+            font-size: 1.75rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            line-height: 1;
+        }
+
+        .mentee-welcome-close:hover {
+            opacity: 1;
+        }
+
+        .mentors-header {
+            margin-top: 40px;
+            text-align: center;
+            padding: 0 2rem;
+        }
+
+        .mentors-header.no-welcome {
+            margin-top: 100px;
+        }
+        
+        .mentors-header h1 {
+            font-size: 2.5rem;
+            color: var(--cornell-red);
+            margin-bottom: 1rem;
+        }
+        
+        .mentors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 2rem;
+        }
+        
+        .mentor-card {
+            background: var(--white);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .mentor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .mentor-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background-color: #f0f0f0;
+        }
+
+        .mentor-image-placeholder {
+            width: 100%;
+            height: 200px;
+            background: var(--cornell-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 3rem;
+            font-weight: 700;
+        }
+        
+        .mentor-info {
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .mentor-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .mentor-role {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .mentor-bio {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .mentor-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tag {
+            background: #f0f0f0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .mentor-action {
+            margin-top: auto;
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        .modal {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .close-modal:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-mentor-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-mentor-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--cornell-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.25rem;
+            font-weight: 600;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .modal-mentor-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-mentor-info h2 {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .modal-mentor-role {
+            color: var(--cornell-red);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .modal-mentor-bio {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+        }
+
+        .modal-section-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+        
+        .time-slots {
+            display: grid;
+            gap: 10px;
+        }
+        
+        .time-slot {
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        
+        .time-slot:hover {
+            border-color: var(--cornell-red);
+            background: rgba(179, 27, 27, 0.05);
+        }
+
+        .time-slot-day {
+            font-weight: 600;
+        }
+
+        .time-slot-time {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .success-message {
+            text-align: center;
+            display: none;
+            padding: 1rem 0;
+        }
+
+        .success-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(76, 175, 80, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: #388E3C;
+            font-size: 2rem;
+        }
+
+        .success-message h3 {
+            color: #388E3C;
+            margin-bottom: 0.5rem;
+        }
+
+        .success-message p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="nav" aria-label="Primary">
+        <div class="nav-content">
+            <a href="index.html" class="logo">PathMatch</a>
+            <div class="nav-links">
+                <a href="index.html#about">About</a>
+                <a href="index.html" class="btn-secondary">Log Out</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Welcome Banner for New Mentees -->
+    <div class="mentee-welcome" id="welcome-section" style="display: none;">
+        <div class="mentee-welcome-banner">
+            <div>
+                <h2>Welcome to PathMatch, <span id="mentee-name-display">Student</span>!</h2>
+                <p>Your account is ready. Browse mentors below and schedule your first session.</p>
+            </div>
+            <button class="mentee-welcome-close" onclick="dismissWelcome()">&times;</button>
+        </div>
+    </div>
+
+    <div class="mentors-header" id="mentors-header">
+        <h1>Connect with Mentors</h1>
+        <p>Browse our community of seniors ready to share their experience.</p>
+    </div>
+
+    <div class="mentors-grid" id="mentors-grid">
+        <!-- Mentors will be populated here -->
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="availability-modal">
+        <div class="modal">
+            <button class="close-modal">&times;</button>
+            <div id="modal-content">
+                <div class="modal-mentor-header">
+                    <div class="modal-mentor-avatar" id="modal-avatar">
+                        <span id="modal-initials">AL</span>
+                    </div>
+                    <div class="modal-mentor-info">
+                        <h2 id="modal-mentor-name">Andrew Lin</h2>
+                        <span class="modal-mentor-role" id="modal-role">Software Engineering</span>
+                    </div>
+                </div>
+                <p class="modal-mentor-bio" id="modal-bio">Experienced mentor ready to help with career guidance, technical interviews, and navigating the tech industry.</p>
+                <p class="modal-section-title">Available Times</p>
+                <div class="time-slots" id="time-slots">
+                    <div class="time-slot">
+                        <span class="time-slot-day">Monday</span>
+                        <span class="time-slot-time">2:00 PM - 2:30 PM</span>
+                    </div>
+                    <div class="time-slot">
+                        <span class="time-slot-day">Tuesday</span>
+                        <span class="time-slot-time">4:00 PM - 4:30 PM</span>
+                    </div>
+                    <div class="time-slot">
+                        <span class="time-slot-day">Thursday</span>
+                        <span class="time-slot-time">11:00 AM - 11:30 AM</span>
+                    </div>
+                </div>
+            </div>
+            <div class="success-message" id="success-msg">
+                <div class="success-icon">✓</div>
+                <h3>Session Requested!</h3>
+                <p>The mentor has been notified and will confirm your session shortly. Check your email for updates.</p>
+                <button class="btn-primary" style="margin-top:1.5rem;" onclick="closeModal()">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="base.js"></script>
+    <script>
+        // Mentor data with bios
+        const hardcodedMentors = [
+            { 
+                name: "Andrew Lin", 
+                role: "Software Engineering", 
+                tags: ["Tech", "Interview Prep"], 
+                image: "Andrew.jpeg",
+                bio: "Software engineer with experience at major tech companies. Passionate about helping students prepare for technical interviews and navigate the software industry."
+            },
+            { 
+                name: "Anushka Singh", 
+                role: "Product Management", 
+                tags: ["PM", "Resume Review"], 
+                image: "Anushka.jpeg",
+                bio: "Product Manager focused on consumer tech. Happy to help with PM interview prep, resume reviews, and understanding the product development lifecycle."
+            },
+            { 
+                name: "Chelsea Ho", 
+                role: "UX Design", 
+                tags: ["Design", "Portfolio"], 
+                image: "Chelsea.jpeg",
+                bio: "UX Designer with a passion for creating intuitive user experiences. Can help with portfolio reviews, design thinking, and breaking into the design field."
+            },
+            { 
+                name: "Hamid Rezaee", 
+                role: "Data Science", 
+                tags: ["AI", "Research"], 
+                image: "Hamid.jpeg",
+                bio: "Data Scientist specializing in machine learning and AI research. Available to discuss PhD applications, research opportunities, and data science careers."
+            },
+            { 
+                name: "Kamran Murray", 
+                role: "Cybersecurity", 
+                tags: ["Security", "Networking"], 
+                image: "Kamran.jpeg",
+                bio: "Cybersecurity professional with expertise in network security. Ready to help students explore security roles and certifications."
+            },
+            { 
+                name: "Leina Mc Laughlin", 
+                role: "Academia", 
+                tags: ["PhD", "Research"], 
+                image: "Leina.jpeg",
+                bio: "Pursuing a PhD with focus on HCI research. Can advise on graduate school applications, academic research, and pursuing an academic career."
+            },
+            { 
+                name: "Max Savona", 
+                role: "Entrepreneurship", 
+                tags: ["Startup", "Funding"], 
+                image: "Max.jpeg",
+                bio: "Startup founder with experience in fundraising and product development. Happy to discuss entrepreneurship, startup life, and business development."
+            }
+        ];
+
+        const grid = document.getElementById('mentors-grid');
+        const modal = document.getElementById('availability-modal');
+        const modalContent = document.getElementById('modal-content');
+        const successMsg = document.getElementById('success-msg');
+
+        // Check for welcome state
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const isNewUser = urlParams.get('welcome') === 'true';
+            const menteeName = urlParams.get('name') || localStorage.getItem('menteeName') || 'Student';
+            
+            if (isNewUser) {
+                document.getElementById('welcome-section').style.display = 'block';
+                document.getElementById('mentee-name-display').textContent = menteeName.split(' ')[0];
+            } else {
+                document.getElementById('mentors-header').classList.add('no-welcome');
+            }
+        });
+
+        window.dismissWelcome = function() {
+            document.getElementById('welcome-section').style.display = 'none';
+            document.getElementById('mentors-header').classList.add('no-welcome');
+        }
+
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').toUpperCase();
+        }
+
+        function createMentorCard(mentor) {
+            const card = document.createElement('div');
+            card.className = 'mentor-card';
+            const initials = getInitials(mentor.name);
+            const imgSrc = mentor.image ? `images/${mentor.image}` : '';
+            
+            card.innerHTML = `
+                ${imgSrc ? 
+                    `<img src="${imgSrc}" alt="${mentor.name}" class="mentor-image" onerror="this.outerHTML='<div class=\\'mentor-image-placeholder\\'>${initials}</div>'">` : 
+                    `<div class="mentor-image-placeholder">${initials}</div>`
+                }
+                <div class="mentor-info">
+                    <div class="mentor-name">${mentor.name}</div>
+                    <div class="mentor-role">${mentor.role || 'Information Science Senior'}</div>
+                    <p class="mentor-bio">${mentor.bio || 'Ready to help guide your academic and career journey.'}</p>
+                    <div class="mentor-tags">
+                        ${(mentor.tags || ['Mentorship']).map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                    <button class="btn-primary mentor-action" onclick="openModal('${mentor.name.replace(/'/g, "\\'")}')">Connect</button>
+                </div>
+            `;
+            return card;
+        }
+
+        async function loadMentors() {
+            // Render hardcoded mentors
+            hardcodedMentors.forEach(m => grid.appendChild(createMentorCard(m)));
+
+            // Try to fetch additional mentors from API
+            try {
+                const response = await fetch('/api/mentors/');
+                if (response.ok) {
+                    const data = await response.json();
+                    data.mentors.forEach(m => {
+                        if (!hardcodedMentors.some(hm => hm.name === m.name)) {
+                            const firstName = m.name.split(' ')[0];
+                            grid.appendChild(createMentorCard({
+                                name: m.name,
+                                role: m.career_pursuing || m.info_concentration,
+                                tags: m.advising_topics ? JSON.parse(m.advising_topics) : ['Mentorship'],
+                                image: `${firstName}.jpeg`,
+                                bio: m.bio || 'Ready to help guide your academic and career journey.'
+                            }));
+                        }
+                    });
+                }
+            } catch (e) {
+                console.log("API unavailable, showing hardcoded mentors only");
+            }
+        }
+
+        // Modal Logic
+        window.openModal = function(name) {
+            const mentor = hardcodedMentors.find(m => m.name === name) || { name, role: 'Mentor', bio: 'Ready to help guide your journey.' };
+            const initials = getInitials(mentor.name);
+            
+            document.getElementById('modal-mentor-name').textContent = mentor.name;
+            document.getElementById('modal-role').textContent = mentor.role;
+            document.getElementById('modal-bio').textContent = mentor.bio;
+            document.getElementById('modal-initials').textContent = initials;
+            
+            // Set avatar image if available
+            const avatarEl = document.getElementById('modal-avatar');
+            if (mentor.image) {
+                avatarEl.innerHTML = `<img src="images/${mentor.image}" alt="${mentor.name}" onerror="this.outerHTML='<span>${initials}</span>'">`;
+            } else {
+                avatarEl.innerHTML = `<span>${initials}</span>`;
+            }
+            
+            modalContent.style.display = 'block';
+            successMsg.style.display = 'none';
+            modal.style.display = 'flex';
+        }
+
+        window.closeModal = function() {
+            modal.style.display = 'none';
+        }
+
+        document.querySelector('.close-modal').addEventListener('click', closeModal);
+        
+        // Time slot click handler
+        document.getElementById('time-slots').addEventListener('click', (e) => {
+            if (e.target.closest('.time-slot')) {
+                modalContent.style.display = 'none';
+                successMsg.style.display = 'block';
+            }
+        });
+        
+        // Close on outside click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        // Escape key to close
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.style.display === 'flex') {
+                closeModal();
+            }
+        });
+
+        loadMentors();
+    </script>
+</body>
+</html>
+

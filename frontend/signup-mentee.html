@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PathMatch connects Cornell CIS students with graduating seniors for personalized mentorship.">
+    <meta name="theme-color" content="#B31B1B">
+    <title>PathMatch — Mentee Sign Up</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <nav class="nav" aria-label="Primary">
+        <div class="nav-content">
+            <a href="index.html" class="logo">PathMatch</a>
+            <div id="primary-navigation" class="nav-links">
+                <a href="index.html#about">About</a>
+                <a href="index.html#how-it-works">How It Works</a>
+                <a href="index.html" class="btn-primary">Back to Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="split-layout">
+        <div class="form-section">
+            <h1 class="formheader">Find a Mentor</h1>
+            <p class="form-subtitle">Tell us about yourself and what you're looking for.</p>
+            
+            <form id="mentee-signup-form">
+                <!-- Account Info -->
+                <div class="form-group">
+                    <label class="questions" for="name">Name (First and Last)</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="questions" for="netid">Cornell NetID</label>
+                    <input type="text" id="netid" name="netid" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="questions" for="email">Email</label>
+                    <input type="text" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="questions" for="password">Password</label>
+                    <input type="password" id="password" name="password" required style="width: 100%; padding: 10px; margin-bottom: 8px; border-radius: 6px; border: 1px solid #ccc;">
+                </div>
+
+                <div class="form-group">
+                    <label class="questions">What is your graduation year?</label>
+                    <select id="gradYear" name="gradYear" required>
+                        <option value="">Select...</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                        <option value="2028">2028</option>
+                        <option value="2029">2029</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="questions">What is your concentration or planned concentration?</label>
+                    <select id="concentration" name="concentration" required>
+                        <option value="">Select...</option>
+                        <option value="Behavioral Science">Behavioral Science</option>
+                        <option value="Data Science">Data Science</option>
+                        <option value="Digital Culture and Production">Digital Culture and Production</option>
+                        <option value="Information Ethics, Law, and Policy">Information Ethics, Law, and Policy</option>
+                        <option value="Interactive Technologies">Interactive Technologies</option>
+                        <option value="Networks, Crowds, and Markets">Networks, Crowds, and Markets</option>
+                        <option value="UX">UX (User Experience)</option>
+                        <option value="I don't know">I don’t know</option>
+                    </select>
+                </div>
+
+                <!-- Survey Questions -->
+                <div class="form-group">
+                    <label class="questions">Which of the following are you seeking advice on? (Select all that apply)</label>
+                    <label><input type="checkbox" name="seeking[]" value="job"> Finding a job</label><br>
+                    <label><input type="checkbox" name="seeking[]" value="mba"> Pursuing an MBA</label><br>
+                    <label><input type="checkbox" name="seeking[]" value="phd"> Pursuing a PhD</label><br>
+                    <label><input type="checkbox" name="seeking[]" value="masters-it"> Pursuing a Master's in Information Science or Tech</label><br>
+                    <label><input type="checkbox" name="seeking[]" value="internship"> Finding an internship</label><br>
+                    <label><input type="checkbox" name="seeking[]" value="major"> Learning more about the major</label>
+                    <p id="seeking-error" style="color:red; display:none;">Please select at least one option.</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="questions">What field of Information Science do you want to pursue or learn more about?</label>
+                    <label><input type="checkbox" name="fields[]" value="quant-finance"> Quant or Finance</label><br>
+                    <label><input type="checkbox" name="fields[]" value="it"> IT</label><br>
+                    <label><input type="checkbox" name="fields[]" value="academia-research"> Academia or Research</label><br>
+                    <label><input type="checkbox" name="fields[]" value="ux-ui"> UX or UI</label><br>
+                    <label><input type="checkbox" name="fields[]" value="management"> Management</label><br>
+                    <label><input type="checkbox" name="fields[]" value="data-science"> Data Science</label><br>
+                    <label><input type="checkbox" name="fields[]" value="programming"> Programming</label><br>
+                    <label><input type="checkbox" name="fields[]" value="entrepreneurship"> Starting your own business</label><br>
+                    <label><input type="checkbox" name="fields[]" value="not-sure"> Not sure</label>
+                    <p id="fields-error" style="color:red; display:none;">Please select at least one option.</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="questions">What career roles are you interested in? (e.g. Product Manager, Data Scientist)</label>
+                    <input type="text" name="careers" placeholder="Separate with commas" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="questions">Tell us a bit about yourself and your interests (Bio)</label>
+                    <textarea name="bio" rows="4" required style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc; box-sizing:border-box;"></textarea>
+                </div>
+
+                <div class="form-group">
+                     <label class="questions">How would you prefer to correspond?</label>
+                    <label><input type="checkbox" name="correspondence" value="Zoom"> Zoom</label><br>
+                    <label><input type="checkbox" name="correspondence" value="In person"> In person</label><br>
+                    <label><input type="checkbox" name="correspondence" value="Email"> Email</label>
+                    <p id="correspondence-error" style="color:red; display:none;">Please select at least one option.</p>
+                </div>
+
+                <button class="btn-primary" type="submit" style="width: 100%; margin-top: 20px;">Create Account</button>
+            </form>
+        </div>
+        
+        <div class="visual-section">
+            <canvas id="mentee-canvas" class="visual-canvas"></canvas>
+            <div class="visual-content">
+                <h2>Begin Your Journey</h2>
+                <p>Connect with seniors who have walked the path you're on.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="base.js"></script>
+    <script>
+        // Init canvas
+        document.addEventListener('DOMContentLoaded', () => {
+             if (typeof DotPattern !== 'undefined') {
+                new DotPattern('mentee-canvas', {
+                    dotSize: 2,
+                    spacing: 25,
+                    color: 'rgba(179, 27, 27, 0.15)',
+                    animationSpeed: 0.0003,
+                    waveAmplitude: 8
+                });
+            }
+        });
+
+        // Form Validation
+        function validateCheckboxGroup(groupName, errorId) {
+            const checkboxes = document.querySelectorAll(`input[name="${groupName}"]`);
+            const oneChecked = Array.from(checkboxes).some(cb => cb.checked);
+            const errorMsg = document.getElementById(errorId);
+            if (!oneChecked) {
+                errorMsg.style.display = "block";
+                return false;
+            } else {
+                errorMsg.style.display = "none";
+                return true;
+            }
+        }
+
+        document.getElementById("mentee-signup-form").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            
+            const validSeeking = validateCheckboxGroup("seeking[]", "seeking-error");
+            const validFields = validateCheckboxGroup("fields[]", "fields-error");
+            const validCorr = validateCheckboxGroup("correspondence", "correspondence-error");
+
+            if (!validSeeking || !validFields || !validCorr) {
+                return;
+            }
+
+            // Save mentee info for display
+            const menteeName = document.getElementById('name').value;
+            const menteeConcentration = document.getElementById('concentration').value;
+            
+            localStorage.setItem('menteeName', menteeName);
+            localStorage.setItem('menteeConcentration', menteeConcentration);
+
+            // For demo: directly redirect to mentors page without API call
+            // (The frontend server doesn't support POST requests)
+            window.location.href = `mentors.html?welcome=true&name=${encodeURIComponent(menteeName)}`;
+        });
+    </script>
+</body>
+</html>

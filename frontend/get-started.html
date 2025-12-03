@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PathMatch connects Cornell CIS students with graduating seniors for personalized mentorship.">
+    <meta name="theme-color" content="#B31B1B">
+    <title>PathMatch — Get Started</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .selection-container {
+            display: flex;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            padding: 2rem;
+            background: var(--light-bg);
+            margin-top: 80px;
+        }
+        
+        .role-card {
+            background: var(--white);
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .role-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(179, 27, 27, 0.1);
+            border-color: var(--cornell-red);
+        }
+        
+        .role-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--cornell-red);
+        }
+        
+        .role-title {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        .role-desc {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .selection-container {
+                flex-direction: column;
+                margin-top: 60px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="nav" aria-label="Primary">
+        <div class="nav-content">
+            <a href="index.html" class="logo">PathMatch</a>
+            <div id="primary-navigation" class="nav-links">
+                <a href="index.html" class="btn-primary">Back to Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="selection-container">
+        <div class="role-card" onclick="window.location.href='signup-mentee.html'" style="cursor: pointer;">
+            <div class="role-icon">🎓</div>
+            <h2 class="role-title">I'm a Student</h2>
+            <p class="role-desc">I'm looking for guidance, advice, and mentorship from seniors.</p>
+            <a href="signup-mentee.html" class="btn-primary">Find a Mentor</a>
+        </div>
+
+        <div class="role-card" onclick="window.location.href='signup-mentor.html'" style="cursor: pointer;">
+            <div class="role-icon">💼</div>
+            <h2 class="role-title">I'm a Senior</h2>
+            <p class="role-desc">I want to share my experience and help underclassmen succeed.</p>
+            <a href="signup-mentor.html" class="btn-secondary">Become a Mentor</a>
+        </div>
+    </div>
+</body>
+</html>
+

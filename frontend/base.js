@@ -10,11 +10,11 @@ if (navToggle && navLinks) {
 
 // Navigate to signup
 document.getElementById('signup').addEventListener('click', function() 
-{ window.location.href = 'signup.html'; 
+{ window.location.href = 'get-started.html'; 
 });
 
 document.getElementById('signup1').addEventListener('click', function() 
-{ window.location.href = 'signup.html'; 
+{ window.location.href = 'get-started.html'; 
 });
 
 // Sticky nav style on scroll
