@@ -79,7 +79,7 @@ def extract_keywords(text):
     """Extract meaningful keywords from text."""
     if not text:
         return set()
-    
+
     # Common words to ignore
     stopwords = {
         'i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'you', 'your', 'he', 'she',
@@ -96,16 +96,16 @@ def extract_keywords(text):
         'really', 'want', 'looking', 'interested', 'help', 'learn', 'like', 'get',
         'im', "i'm", 'ive', "i've", 'im', 'currently', 'working', 'work', 'experience'
     }
-    
+
     # Clean and tokenize
     text = text.lower()
     # Keep alphanumeric and spaces
     cleaned = ''.join(c if c.isalnum() or c.isspace() else ' ' for c in text)
     words = cleaned.split()
-    
+
     # Filter stopwords and short words
     keywords = {w for w in words if w not in stopwords and len(w) > 2}
-    
+
     return keywords
 
 
@@ -126,7 +126,7 @@ def expand_keywords(keywords):
 def calculate_compatibility(mentee, mentor):
     """
     Calculate compatibility score between mentee and mentor.
-    
+
     Returns a dict with:
     - score: 0-100 compatibility score
     - breakdown: detailed scoring breakdown
@@ -136,7 +136,7 @@ def calculate_compatibility(mentee, mentor):
     max_score = 100
     breakdown = {}
     reasons = []
-    
+
     # Parse JSON fields
     try:
         mentee_needs = json.loads(mentee.advising_needs) if mentee.advising_needs else []
@@ -146,11 +146,11 @@ def calculate_compatibility(mentee, mentor):
         mentee_needs = []
         mentee_careers = []
         mentor_topics = []
-    
+
     # =========================================================================
     # DETERMINISTIC MATCHING (60 points)
     # =========================================================================
-    
+
     # 1. Advising Topics Alignment (30 points)
     topic_score = 0
     matched_topics = []
@@ -158,22 +158,22 @@ def calculate_compatibility(mentee, mentor):
         mentee_needs_lower = {n.lower().strip() for n in mentee_needs}
         mentor_topics_lower = {t.lower().strip() for t in mentor_topics}
         matches = mentee_needs_lower.intersection(mentor_topics_lower)
-        
+
         if mentee_needs_lower:
             topic_score = (len(matches) / len(mentee_needs_lower)) * 30
             matched_topics = list(matches)
             if matches:
                 reasons.append(f"Can help with: {', '.join(matched_topics)}")
-    
+
     breakdown['advising_topics'] = round(topic_score, 1)
     score += topic_score
-    
+
     # 2. Career Path Alignment (20 points)
     career_score = 0
     if mentee_careers and mentor.career_pursuing:
         mentor_career = mentor.career_pursuing.lower().strip()
         mentee_careers_lower = [c.lower().strip() for c in mentee_careers]
-        
+
         # Direct match
         if mentor_career in mentee_careers_lower:
             career_score = 20
@@ -187,16 +187,16 @@ def calculate_compatibility(mentee, mentor):
                     career_score = 15
                     reasons.append(f"Related career path: {mentor.career_pursuing}")
                     break
-    
+
     breakdown['career_path'] = round(career_score, 1)
     score += career_score
-    
+
     # 3. Concentration Alignment (10 points)
     concentration_score = 0
     if mentee.info_concentration and mentor.info_concentration:
         mentee_conc = mentee.info_concentration.lower().strip()
         mentor_conc = mentor.info_concentration.lower().strip()
-        
+
         if mentee_conc == mentor_conc:
             concentration_score = 10
             if mentee_conc != "i don't know":
@@ -204,54 +204,54 @@ def calculate_compatibility(mentee, mentor):
         elif mentee_conc == "i don't know":
             # Neutral - mentee is exploring
             concentration_score = 5
-    
+
     breakdown['concentration'] = round(concentration_score, 1)
     score += concentration_score
-    
+
     # =========================================================================
     # SEMANTIC MATCHING (40 points)
     # =========================================================================
-    
+
     # Extract and compare bio keywords
     mentee_bio_keywords = extract_keywords(mentee.bio or '')
     mentee_fields_keywords = extract_keywords(mentee.field_interests or '')
     mentee_all_keywords = expand_keywords(mentee_bio_keywords | mentee_fields_keywords)
-    
+
     mentor_bio_keywords = extract_keywords(mentor.bio or '')
     mentor_exp_keywords = extract_keywords(mentor.experiences or '')
     mentor_all_keywords = expand_keywords(mentor_bio_keywords | mentor_exp_keywords)
-    
+
     # Add career keywords
     if mentor.career_pursuing:
         mentor_all_keywords.update(expand_keywords(extract_keywords(mentor.career_pursuing)))
-    
+
     # Calculate semantic overlap
     semantic_score = 0
     if mentee_all_keywords and mentor_all_keywords:
         overlap = mentee_all_keywords & mentor_all_keywords
-        
+
         # Score based on overlap ratio
         if overlap:
             # Use Jaccard-like similarity but weighted toward mentee's interests
             overlap_ratio = len(overlap) / max(len(mentee_all_keywords), 1)
             semantic_score = min(overlap_ratio * 60, 40)  # Cap at 40 points
-            
+
             # Add reason for significant keyword matches
             important_matches = overlap - {'data', 'science', 'engineering', 'technology', 'tech'}
             if important_matches:
                 top_matches = list(important_matches)[:3]
                 reasons.append(f"Shared interests: {', '.join(top_matches)}")
-    
+
     breakdown['semantic'] = round(semantic_score, 1)
     score += semantic_score
-    
+
     # =========================================================================
     # FINAL SCORE
     # =========================================================================
-    
+
     # Ensure score is within bounds
     final_score = max(0, min(100, score))
-    
+
     # Add quality indicator
     if final_score >= 80:
         quality = "Excellent Match"
@@ -261,7 +261,7 @@ def calculate_compatibility(mentee, mentor):
         quality = "Moderate Match"
     else:
         quality = "Low Match"
-    
+
     return {
         'score': round(final_score, 1),
         'quality': quality,
@@ -273,7 +273,7 @@ def calculate_compatibility(mentee, mentor):
 def get_top_matches(mentee, mentors, limit=10):
     """Get top N mentor matches for a mentee."""
     matches = []
-    
+
     for mentor in mentors:
         if mentor.availability_status == 'available':
             result = calculate_compatibility(mentee, mentor)
@@ -284,10 +284,10 @@ def get_top_matches(mentee, mentors, limit=10):
                 'breakdown': result['breakdown'],
                 'reasons': result['reasons']
             })
-    
+
     # Sort by score descending
     matches.sort(key=lambda x: x['score'], reverse=True)
-    
+
     return matches[:limit]
 
 
@@ -319,17 +319,17 @@ def health():
 def register():
     """Register a new user (base registration)."""
     data = request.get_json()
-    
+
     required_fields = ['net_id', 'email', 'password', 'name', 'role']
     if not all(field in data for field in required_fields):
         return jsonify({'error': 'Missing required fields'}), 400
-    
+
     if User.query.filter_by(net_id=data['net_id']).first():
         return jsonify({'error': 'NetID already registered'}), 409
-    
+
     if User.query.filter_by(email=data['email']).first():
         return jsonify({'error': 'Email already registered'}), 409
-    
+
     user = User(
         net_id=data['net_id'],
         email=data['email'],
@@ -337,13 +337,13 @@ def register():
         role=data['role']
     )
     user.set_password(data['password'])
-    
+
     db.session.add(user)
     db.session.commit()
-    
+
     access_token = create_access_token(identity=str(user.id))
     refresh_token = create_refresh_token(identity=str(user.id))
-    
+
     return jsonify({
         'message': 'User registered successfully',
         'user': user.to_dict(),
@@ -356,10 +356,10 @@ def register():
 def register_mentee():
     """Register a new mentee with profile."""
     data = request.get_json()
-    
+
     if User.query.filter_by(net_id=data.get('net_id')).first():
         return jsonify({'error': 'NetID already registered'}), 409
-    
+
     try:
         # Create user
         user = User(
@@ -369,21 +369,21 @@ def register_mentee():
             role='mentee'
         )
         user.set_password(data.get('password'))
-        
+
         db.session.add(user)
         db.session.flush()
-        
+
         # Serialize list fields
         seeking = json.dumps(data.get('seeking', []))
         fields = json.dumps(data.get('fields', []))
-        
+
         # Parse careers
         careers_str = data.get('careers', '')
         careers_list = [c.strip() for c in careers_str.split(',') if c.strip()]
         careers_json = json.dumps(careers_list)
-        
+
         correspondence = json.dumps(data.get('correspondence', []))
-        
+
         # Create mentee profile
         mentee = Mentee(
             user_id=user.id,
@@ -395,19 +395,19 @@ def register_mentee():
             careers_interested_in=careers_json,
             bio=data.get('bio')
         )
-        
+
         db.session.add(mentee)
         db.session.commit()
-        
+
         access_token = create_access_token(identity=str(user.id))
-        
+
         return jsonify({
             'message': 'Mentee registered successfully',
             'access_token': access_token,
             'mentee_id': mentee.id,
             'user': user.to_dict()
         }), 201
-        
+
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
@@ -423,11 +423,11 @@ def register_mentor():
     else:
         form = request.get_json() or {}
         files = {}
-    
+
     net_id = form.get('net_id')
     if User.query.filter_by(net_id=net_id).first():
         return jsonify({'error': 'NetID already registered'}), 409
-    
+
     try:
         # Create user
         user = User(
@@ -437,10 +437,10 @@ def register_mentor():
             role='mentor'
         )
         user.set_password(form.get('password'))
-        
+
         db.session.add(user)
         db.session.flush()
-        
+
         # Handle image upload
         if 'profileImage' in files:
             file = files['profileImage']
@@ -451,7 +451,7 @@ def register_mentor():
                 if not os.path.exists(upload_path):
                     os.makedirs(upload_path)
                 file.save(os.path.join(upload_path, filename))
-        
+
         # Parse list fields
         if request.content_type and 'multipart/form-data' in request.content_type:
             topics = json.dumps(request.form.getlist('topics[]') or request.form.getlist('topics'))
@@ -459,7 +459,7 @@ def register_mentor():
         else:
             topics = json.dumps(form.get('topics', []))
             correspondence = json.dumps(form.get('correspondence', []))
-        
+
         # Create mentor profile
         mentor = Mentor(
             user_id=user.id,
@@ -472,19 +472,19 @@ def register_mentor():
             calendly_link=form.get('calendly'),
             availability_status='available'
         )
-        
+
         db.session.add(mentor)
         db.session.commit()
-        
+
         access_token = create_access_token(identity=str(user.id))
-        
+
         return jsonify({
             'message': 'Mentor registered successfully',
             'access_token': access_token,
             'mentor_id': mentor.id,
             'user': user.to_dict()
         }), 201
-        
+
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
@@ -494,18 +494,18 @@ def register_mentor():
 def login():
     """Login user."""
     data = request.get_json()
-    
+
     if not data.get('net_id') or not data.get('password'):
         return jsonify({'error': 'NetID and password required'}), 400
-    
+
     user = User.query.filter_by(net_id=data['net_id']).first()
-    
+
     if not user or not user.check_password(data['password']):
         return jsonify({'error': 'Invalid credentials'}), 401
-    
+
     access_token = create_access_token(identity=str(user.id))
     refresh_token = create_refresh_token(identity=str(user.id))
-    
+
     return jsonify({
         'message': 'Login successful',
         'user': user.to_dict(),
@@ -529,10 +529,10 @@ def get_current_user():
     """Get current user profile."""
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
-    
+
     if not user:
         return jsonify({'error': 'User not found'}), 404
-    
+
     return jsonify({'user': user.to_dict()}), 200
 
 
@@ -560,13 +560,13 @@ def update_mentor_profile():
     """Create or update mentor profile."""
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
-    
+
     if user.role != 'mentor':
         return jsonify({'error': 'User is not registered as a mentor'}), 403
-    
+
     data = request.get_json()
     mentor = Mentor.query.filter_by(user_id=current_user_id).first()
-    
+
     if mentor:
         mentor.graduating_year = data.get('graduating_year', mentor.graduating_year)
         mentor.info_concentration = data.get('info_concentration', mentor.info_concentration)
@@ -587,9 +587,9 @@ def update_mentor_profile():
             availability_status=data.get('availability_status', 'available')
         )
         db.session.add(mentor)
-    
+
     db.session.commit()
-    
+
     return jsonify({
         'message': 'Mentor profile updated successfully',
         'mentor': mentor.to_dict()
@@ -602,10 +602,10 @@ def get_my_mentor_profile():
     """Get current user's mentor profile."""
     current_user_id = get_jwt_identity()
     mentor = Mentor.query.filter_by(user_id=current_user_id).first()
-    
+
     if not mentor:
         return jsonify({'error': 'Mentor profile not found'}), 404
-    
+
     return jsonify({'mentor': mentor.to_dict()}), 200
 
 
@@ -615,19 +615,19 @@ def update_availability():
     """Update mentor availability status."""
     current_user_id = get_jwt_identity()
     mentor = Mentor.query.filter_by(user_id=current_user_id).first()
-    
+
     if not mentor:
         return jsonify({'error': 'Mentor profile not found'}), 404
-    
+
     data = request.get_json()
     status = data.get('status')
-    
+
     if status not in ['available', 'dnd', 'unavailable']:
         return jsonify({'error': 'Invalid status'}), 400
-    
+
     mentor.availability_status = status
     db.session.commit()
-    
+
     return jsonify({'message': 'Availability updated', 'status': status}), 200
 
 
@@ -641,13 +641,13 @@ def update_mentee_profile():
     """Create or update mentee profile."""
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
-    
+
     if user.role != 'mentee':
         return jsonify({'error': 'User is not registered as a mentee'}), 403
-    
+
     data = request.get_json()
     mentee = Mentee.query.filter_by(user_id=current_user_id).first()
-    
+
     if mentee:
         mentee.graduating_year = data.get('graduating_year', mentee.graduating_year)
         mentee.info_concentration = data.get('info_concentration', mentee.info_concentration)
@@ -666,9 +666,9 @@ def update_mentee_profile():
             bio=data.get('bio')
         )
         db.session.add(mentee)
-    
+
     db.session.commit()
-    
+
     return jsonify({
         'message': 'Mentee profile updated successfully',
         'mentee': mentee.to_dict()
@@ -681,10 +681,10 @@ def get_my_mentee_profile():
     """Get current user's mentee profile."""
     current_user_id = get_jwt_identity()
     mentee = Mentee.query.filter_by(user_id=current_user_id).first()
-    
+
     if not mentee:
         return jsonify({'error': 'Mentee profile not found'}), 404
-    
+
     return jsonify({'mentee': mentee.to_dict()}), 200
 
 
@@ -698,17 +698,17 @@ def find_matches():
     """Find compatible mentors for a mentee."""
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
-    
+
     if user.role != 'mentee':
         return jsonify({'error': 'Only mentees can search for mentors'}), 403
-    
+
     mentee = Mentee.query.filter_by(user_id=current_user_id).first()
     if not mentee:
         return jsonify({'error': 'Mentee profile not found'}), 404
-    
+
     available_mentors = Mentor.query.filter_by(availability_status='available').all()
     matches = get_top_matches(mentee, available_mentors)
-    
+
     return jsonify({
         'matches': [{
             'mentor': m['mentor'].to_dict(),
@@ -726,7 +726,7 @@ def find_matches_for_mentee(mentee_id):
     mentee = Mentee.query.get_or_404(mentee_id)
     available_mentors = Mentor.query.filter_by(availability_status='available').all()
     matches = get_top_matches(mentee, available_mentors)
-    
+
     return jsonify({
         'mentee': mentee.to_dict(),
         'matches': [{
@@ -743,18 +743,18 @@ def find_matches_for_mentee(mentee_id):
 def calculate_match():
     """Calculate match score between a mentee and mentor (for demo/testing)."""
     data = request.get_json()
-    
+
     mentee_id = data.get('mentee_id')
     mentor_id = data.get('mentor_id')
-    
+
     if not mentee_id or not mentor_id:
         return jsonify({'error': 'Both mentee_id and mentor_id required'}), 400
-    
+
     mentee = Mentee.query.get_or_404(mentee_id)
     mentor = Mentor.query.get_or_404(mentor_id)
-    
+
     result = calculate_compatibility(mentee, mentor)
-    
+
     return jsonify({
         'mentee': mentee.to_dict(),
         'mentor': mentor.to_dict(),
@@ -767,35 +767,35 @@ def calculate_match():
 def create_match():
     """Create a match between mentor and mentee."""
     data = request.get_json()
-    
+
     mentor_id = data.get('mentor_id')
     mentee_id = data.get('mentee_id')
-    
+
     if not mentor_id or not mentee_id:
         return jsonify({'error': 'Mentor ID and Mentee ID required'}), 400
-    
+
     mentor = Mentor.query.get(mentor_id)
     mentee = Mentee.query.get(mentee_id)
-    
+
     if not mentor or not mentee:
         return jsonify({'error': 'Mentor or mentee not found'}), 404
-    
+
     existing = Match.query.filter_by(mentor_id=mentor_id, mentee_id=mentee_id).first()
     if existing:
         return jsonify({'error': 'Match already exists'}), 409
-    
+
     result = calculate_compatibility(mentee, mentor)
-    
+
     match = Match(
         mentor_id=mentor_id,
         mentee_id=mentee_id,
         compatibility_score=result['score'],
         status='pending'
     )
-    
+
     db.session.add(match)
     db.session.commit()
-    
+
     return jsonify({
         'message': 'Match created successfully',
         'match': match.to_dict(),
@@ -809,7 +809,7 @@ def get_my_matches():
     """Get all matches for current user."""
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
-    
+
     if user.role == 'mentor':
         mentor = Mentor.query.filter_by(user_id=current_user_id).first()
         if not mentor:
@@ -820,7 +820,7 @@ def get_my_matches():
         if not mentee:
             return jsonify({'matches': []}), 200
         matches = Match.query.filter_by(mentee_id=mentee.id).all()
-    
+
     return jsonify({
         'matches': [match.to_dict() for match in matches]
     }), 200
@@ -832,14 +832,14 @@ def update_match_status(match_id):
     """Update match status."""
     match = Match.query.get_or_404(match_id)
     data = request.get_json()
-    
+
     status = data.get('status')
     if status not in ['pending', 'confirmed', 'completed', 'cancelled']:
         return jsonify({'error': 'Invalid status'}), 400
-    
+
     match.status = status
     db.session.commit()
-    
+
     return jsonify({
         'message': 'Match status updated',
         'match': match.to_dict()
@@ -875,12 +875,15 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
         print(f"Database ready at: {db_path}")
-    
+
     print("Starting PathMatch API server...")
-    print("API available at: http://localhost:5000")
-    
+
+    port = int(os.environ.get("PORT", 5000))
+
+    print(f"API available at: http://localhost:{port}")
+
     app.run(
         host='0.0.0.0',
-        port=5000,
+        port=port,
         debug=True  # Demo mode - always enable debug
-    )
+        )

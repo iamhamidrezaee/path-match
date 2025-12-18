@@ -110,54 +110,54 @@
 
     <script>
         // API Configuration
-        const API_BASE = 'http://localhost:5000';
+        const API_BASE = 'http://localhost:5002';
 
         // Demo mentors (fallback when API is unavailable)
         const DEMO_MENTORS = [
-            { 
+            {
                 id: 1,
-                name: "Hamid Rezaee", 
-                career_pursuing: "Data Science", 
+                name: "Hamid Rezaee",
+                career_pursuing: "Data Science",
                 info_concentration: "Data Science",
                 bio: "Data scientist specializing in machine learning and AI research. Published papers on NLP and computer vision.",
                 advising_topics: '["phd", "masters-it", "job"]',
                 calendly_link: "https://calendly.com/hamid-r",
                 image: "Hamid.jpeg"
             },
-            { 
+            {
                 id: 2,
-                name: "Andrew Lin", 
-                career_pursuing: "Software Engineering", 
+                name: "Andrew Lin",
+                career_pursuing: "Software Engineering",
                 info_concentration: "Interactive Technologies",
                 bio: "Software engineer with experience at Google and Meta. Love building scalable systems and mentoring on technical interviews.",
                 advising_topics: '["job", "internship"]',
                 calendly_link: "https://calendly.com/andrew-lin",
                 image: "Andrew.jpeg"
             },
-            { 
+            {
                 id: 3,
-                name: "Chelsea Ho", 
-                career_pursuing: "UX Design", 
+                name: "Chelsea Ho",
+                career_pursuing: "UX Design",
                 info_concentration: "UX",
                 bio: "UX Designer passionate about human-centered design. Portfolio includes work for startups and Fortune 500 companies.",
                 advising_topics: '["job", "major"]',
                 calendly_link: "https://calendly.com/chelsea-ho",
                 image: "Chelsea.jpeg"
             },
-            { 
+            {
                 id: 4,
-                name: "Leina McLaughlin", 
-                career_pursuing: "Academia", 
+                name: "Leina McLaughlin",
+                career_pursuing: "Academia",
                 info_concentration: "Behavioral Science",
                 bio: "Pursuing PhD in HCI research. Focus on how technology affects human behavior and social interactions.",
                 advising_topics: '["phd", "major"]',
                 calendly_link: "https://calendly.com/leina-m",
                 image: "Leina.jpeg"
             },
-            { 
+            {
                 id: 5,
-                name: "Max Savona", 
-                career_pursuing: "Entrepreneurship", 
+                name: "Max Savona",
+                career_pursuing: "Entrepreneurship",
                 info_concentration: "Networks, Crowds, and Markets",
                 bio: "Startup founder with experience in fintech. Raised seed funding and built a team of 10.",
                 advising_topics: '["job", "mba", "internship"]',
@@ -183,59 +183,101 @@
             const menteeName = urlParams.get('name') || localStorage.getItem('menteeName') || 'Student';
             const isDemo = urlParams.get('demo') === 'true';
 
+            localStorage.setItem('menteeName', menteeName);
+            
             // Show welcome banner
             if (isWelcome) {
                 document.getElementById('welcome-banner').style.display = 'flex';
                 document.getElementById('mentee-name-display').textContent = menteeName.split(' ')[0];
             }
 
-            // Load profile from localStorage (and optionally refresh from API)
-            await loadProfile();
+            renderProfileFromLocalStorage();
 
             // Load matches
-            if (isDemo || !localStorage.getItem('menteeId')) {
-                loadDemoMatches();
-            } else {
+            if (localStorage.getItem('accessToken') && localStorage.getItem('menteeId')) {
                 await loadMatches();
+            } else {
+                loadDemoMatches();
             }
         });
+
+        function renderProfileFromLocalStorage() {
+            const name = localStorage.getItem('menteeName') || 'Student';
+            const concentration = localStorage.getItem('menteeConcentration') || '-';
+            const careers = localStorage.getItem('menteeCareers') || '-';
+            const gradYear = localStorage.getItem('menteeGradYear') || '-';
+
+            let needs = [];
+            try {
+                needs = JSON.parse(localStorage.getItem('menteeNeeds') || '[]');
+            } catch (e) {
+                needs = [];
+            }
+
+            // make profile card
+            const nameEl = document.getElementById('profile-name');
+            if (nameEl) nameEl.textContent = name;
+
+            const concEl = document.getElementById('profile-concentration');
+            if (concEl) concEl.textContent = concentration;
+
+            const careersEl = document.getElementById('profile-careers');
+            if (careersEl) careersEl.textContent = (careers.split(',')[0] || '-');
+
+            const yearEl = document.getElementById('profile-year');
+            if (yearEl) yearEl.textContent = gradYear;
+
+            // tags
+            const tagsContainer = document.getElementById('profile-tags');
+            if (tagsContainer) {
+                tagsContainer.innerHTML = '';
+                needs.forEach(need => {
+                    const tag = document.createElement('span');
+                    tag.className = 'profile-tag';
+                    tag.textContent = TOPIC_NAMES[need] || need;
+                    tagsContainer.appendChild(tag);
+                });
+            }
+        }
 
         async function loadProfile() {
             // First try to fetch from API if we have a token
             const token = localStorage.getItem('accessToken');
-            
+
             if (token) {
                 try {
                     // Fetch user info
                     const userRes = await fetch(`${API_BASE}/api/auth/me`, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
-                    
+
                     if (userRes.ok) {
                         const userData = await userRes.json();
                         localStorage.setItem('menteeName', userData.user.name);
                     }
-                    
+
                     // Fetch mentee profile
                     const profileRes = await fetch(`${API_BASE}/api/mentees/profile`, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
-                    
+
                     if (profileRes.ok) {
                         const profileData = await profileRes.json();
                         const mentee = profileData.mentee;
-                        
+
                         // Update localStorage with fresh data
                         localStorage.setItem('menteeConcentration', mentee.info_concentration || '');
                         localStorage.setItem('menteeCareers', JSON.parse(mentee.careers_interested_in || '[]').join(', '));
                         localStorage.setItem('menteeNeeds', mentee.advising_needs || '[]');
                         localStorage.setItem('menteeId', mentee.id);
+                        localStorage.setItem('menteeGradYear', mentee.graduating_year || '');
+
                     }
                 } catch (e) {
                     console.log('Could not fetch profile from API, using localStorage');
                 }
             }
-            
+
             // Now render from localStorage (which may have been updated)
             const name = localStorage.getItem('menteeName') || 'Student';
             const concentration = localStorage.getItem('menteeConcentration') || 'Not specified';
@@ -249,7 +291,12 @@
 
             document.getElementById('profile-name').textContent = name;
             document.getElementById('profile-concentration').textContent = concentration;
-            document.getElementById('profile-careers').textContent = careers.split(',')[0] || 'Exploring';
+            document.getElementById('profile-careers').textContent =
+                careers.split(',')[0] || 'Exploring';
+            document.getElementById('profile-year').textContent =
+                mentee?.graduating_year ||
+                localStorage.getItem('menteeGradYear') ||
+                '-';
 
             // Add tags for needs
             const tagsContainer = document.getElementById('profile-tags');
@@ -268,7 +315,7 @@
 
             try {
                 const response = await fetch(`${API_BASE}/api/matches/find-for-mentee/${menteeId}`);
-                
+
                 if (response.ok) {
                     const data = await response.json();
                     renderMatches(data.matches);
@@ -285,14 +332,14 @@
             // Calculate demo scores based on stored mentee info
             const menteeNeeds = JSON.parse(localStorage.getItem('menteeNeeds') || '[]');
             const menteeConcentration = localStorage.getItem('menteeConcentration') || '';
-            
+
             const matches = DEMO_MENTORS.map(mentor => {
                 const mentorTopics = JSON.parse(mentor.advising_topics || '[]');
-                
+
                 // Simple scoring for demo
                 let score = 20; // Base score
                 const reasons = [];
-                
+
                 // Topic matching
                 const topicMatches = menteeNeeds.filter(need => mentorTopics.includes(need));
                 if (topicMatches.length > 0) {
@@ -300,28 +347,28 @@
                     const matchNames = topicMatches.map(t => TOPIC_NAMES[t]).slice(0, 2);
                     reasons.push('Can help with: ' + matchNames.join(', '));
                 }
-                
+
                 // Concentration matching
-                if (menteeConcentration && mentor.info_concentration && 
+                if (menteeConcentration && mentor.info_concentration &&
                     menteeConcentration.toLowerCase() === mentor.info_concentration.toLowerCase()) {
                     score += 20;
                     reasons.push('Same concentration');
                 }
-                
+
                 // Career keyword matching
                 const menteeCareers = (localStorage.getItem('menteeCareers') || '').toLowerCase();
                 if (menteeCareers.includes(mentor.career_pursuing.toLowerCase().split(' ')[0])) {
                     score += 25;
                     reasons.push('Matching career path');
                 }
-                
+
                 score = Math.min(100, score);
-                
+
                 let quality = 'Low Match';
                 if (score >= 80) quality = 'Excellent Match';
                 else if (score >= 60) quality = 'Good Match';
                 else if (score >= 40) quality = 'Moderate Match';
-                
+
                 return {
                     mentor: mentor,
                     compatibility_score: score,
@@ -329,16 +376,16 @@
                     reasons: reasons.length > 0 ? reasons : ['General mentorship available']
                 };
             });
-            
+
             // Sort by score
             matches.sort((a, b) => b.compatibility_score - a.compatibility_score);
-            
+
             renderMatches(matches);
         }
 
         function renderMatches(matches) {
             const grid = document.getElementById('matches-grid');
-            
+
             if (!matches || matches.length === 0) {
                 grid.innerHTML = `
                     <div class="empty-state">
@@ -351,25 +398,25 @@
             }
 
             grid.innerHTML = '';
-            
+
             matches.forEach(match => {
                 const mentor = match.mentor;
                 const score = Math.round(match.compatibility_score);
                 const quality = match.quality || 'Match';
                 const reasons = match.reasons || [];
-                
+
                 const initials = mentor.name.split(' ').map(n => n[0]).join('').toUpperCase();
                 const firstName = mentor.name.split(' ')[0];
                 const imageSrc = mentor.image || `${firstName}.jpeg`;
-                
+
                 const qualityClass = quality.toLowerCase().replace(' match', '');
-                
+
                 const card = document.createElement('div');
                 card.className = 'match-card';
                 card.innerHTML = `
                     <div class="match-content">
                         <div class="match-avatar">
-                            <img src="images/${imageSrc}" alt="${mentor.name}" 
+                            <img src="images/${imageSrc}" alt="${mentor.name}"
                                  onerror="this.outerHTML='<span>${initials}</span>'">
                         </div>
                         <div class="match-info">
@@ -396,30 +443,30 @@
                         </button>
                     </div>
                 `;
-                
+
                 grid.appendChild(card);
             });
         }
 
         // Modal functions
         const modal = document.getElementById('connect-modal');
-        
+
         window.openConnectModal = function(mentor) {
             const initials = mentor.name.split(' ').map(n => n[0]).join('').toUpperCase();
             const firstName = mentor.name.split(' ')[0];
             const imageSrc = mentor.image || `${firstName}.jpeg`;
-            
+
             document.getElementById('modal-mentor-name').textContent = mentor.name;
             document.getElementById('modal-role').textContent = mentor.career_pursuing || 'Mentor';
             document.getElementById('modal-bio').textContent = mentor.bio || 'Ready to help guide your journey.';
-            
+
             const avatarEl = document.getElementById('modal-avatar');
-            avatarEl.innerHTML = `<img src="images/${imageSrc}" alt="${mentor.name}" 
+            avatarEl.innerHTML = `<img src="images/${imageSrc}" alt="${mentor.name}"
                                    onerror="this.outerHTML='<span>${initials}</span>'">`;
-            
+
             const calendlyLink = mentor.calendly_link || '#';
             document.getElementById('modal-calendly').href = calendlyLink;
-            
+
             document.getElementById('modal-content').style.display = 'block';
             document.getElementById('success-msg').style.display = 'none';
             modal.style.display = 'flex';
@@ -434,7 +481,7 @@
         };
 
         document.querySelector('.close-modal').addEventListener('click', closeModal);
-        
+
         modal.addEventListener('click', (e) => {
             if (e.target === modal) closeModal();
         });
@@ -447,4 +494,3 @@
     </script>
 </body>
 </html>
-

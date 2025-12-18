@@ -33,7 +33,7 @@
                     <h1>Find a Mentor</h1>
                     <p>Tell us about yourself and what you're looking for.</p>
                 </div>
-            
+
                 <form class="auth-form" id="mentee-signup-form">
                     <!-- Account Info -->
                     <div class="form-field">
@@ -136,7 +136,7 @@
                     <button class="btn-primary" type="submit" style="width: 100%; margin-top: 1rem;">Create Account</button>
                 </form>
             </div>
-            
+
             <div class="auth-visual">
                 <div class="auth-visual-pattern"></div>
                 <div class="auth-visual-content">
@@ -158,7 +158,7 @@
     <script src="base.js"></script>
     <script>
         // API Configuration
-        const API_BASE = 'http://localhost:5000';
+        const API_BASE = 'http://localhost:5002';
 
         // Init canvas
         document.addEventListener('DOMContentLoaded', () => {
@@ -195,7 +195,7 @@
 
         document.getElementById("mentee-signup-form").addEventListener("submit", async function (e) {
             e.preventDefault();
-            
+
             const validSeeking = validateCheckboxGroup("seeking[]", "seeking-error");
             const validFields = validateCheckboxGroup("fields[]", "fields-error");
             const validCorr = validateCheckboxGroup("correspondence", "correspondence-error");
@@ -222,6 +222,7 @@
             // Save mentee info for display
             localStorage.setItem('menteeName', formData.name);
             localStorage.setItem('menteeConcentration', formData.concentration);
+            localStorage.setItem('menteeGradYear', formData.gradYear);
             localStorage.setItem('menteeBio', formData.bio);
             localStorage.setItem('menteeCareers', formData.careers);
             localStorage.setItem('menteeNeeds', JSON.stringify(formData.seeking));
@@ -236,13 +237,13 @@
                 });
 
                 const data = await response.json();
-                
+
                 if (response.ok) {
                     // Store auth token and mentee ID
                     localStorage.setItem('accessToken', data.access_token);
                     localStorage.setItem('menteeId', data.mentee_id);
                     localStorage.setItem('userId', data.user?.id);
-                    
+
                     // Redirect to matches page
                     window.location.href = `matches.html?welcome=true&name=${encodeURIComponent(formData.name)}`;
                 } else if (response.status === 409) {
