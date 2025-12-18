@@ -85,8 +85,8 @@
                             <h3 class="profile-name" id="mentor-name">Hamid Rezaee</h3>
                             <p class="profile-role" id="mentor-role">Data Science</p>
                             <div class="profile-meta">
-                                <span class="meta-item">Class of 2025</span>
-                                <span class="meta-item">AI & Research</span>
+                                <span class="meta-item" id="mentor-classyear">Class of 2025</span>
+                                <span class="meta-item" id="mentor-concentration">AI & Research</span>
                             </div>
                         </div>
                     </div>
@@ -97,7 +97,7 @@
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">Topics</span>
-                            <span class="detail-value">PhD Prep, Research, Data Science</span>
+                            <span class="detail-value" id="mentor-topics">PhD Prep, Research, Data Science</span>
                         </div>
                     </div>
                 </section>
@@ -241,29 +241,47 @@
             const urlParams = new URLSearchParams(window.location.search);
             const isNewUser = urlParams.get('welcome') === 'true';
             const welcomeBanner = document.getElementById('welcome-banner');
-            
-            if (!isNewUser) {
+
+            if (!isNewUser && welcomeBanner) {
                 welcomeBanner.style.display = 'none';
             }
 
-            // Load mentor info from URL or localStorage
-            const mentorName = urlParams.get('name') || localStorage.getItem('mentorName') || 'Hamid Rezaee';
+            const mentorName = urlParams.get('name') || localStorage.getItem('mentorName') || 'Mentor';
             const mentorRole = localStorage.getItem('mentorRole') || 'Data Science';
-            const mentorConcentration = localStorage.getItem('mentorConcentration') || 'Data Science';
-            
+
             document.getElementById('mentor-name').textContent = mentorName;
-            
-            // Update role display
+
             const roleEl = document.getElementById('mentor-role');
-            if (roleEl) {
-                roleEl.textContent = mentorRole;
+            if (roleEl) roleEl.textContent = mentorRole;
+
+            const mentorGradYear = localStorage.getItem('mentorGradYear') || '2025';
+            const mentorConcentrationLS = localStorage.getItem('mentorConcentration') || 'AI & Research';
+
+            const calendly = localStorage.getItem('mentorCalendly') || 'calendly.com/example';
+            const calendlyEl = document.getElementById('calendly-link');
+            if (calendlyEl) {
+                calendlyEl.textContent = calendly;
+                calendlyEl.href = `https://${calendly.replace(/^https?:\/\//, '')}`;
             }
-            
+
+            const classYearEl = document.getElementById('mentor-classyear');
+            if (classYearEl) classYearEl.textContent = `Class of ${mentorGradYear}`;
+
+            const concentrationEl = document.getElementById('mentor-concentration');
+            if (concentrationEl) concentrationEl.textContent = mentorConcentrationLS;
+
+            let topics = [];
+            try {
+                topics = JSON.parse(localStorage.getItem('mentorTopics') || '[]');
+            } catch (e) {}
+
+            const topicsEl = document.getElementById('mentor-topics');
+            if (topicsEl) topicsEl.textContent = topics.length ? topics.join(', ') : '—';
             // Generate initials for avatar
             const initials = mentorName.split(' ').map(n => n[0]).join('').toUpperCase();
             const firstName = mentorName.split(' ')[0];
             const avatarEl = document.getElementById('profile-avatar');
-            
+
             if (avatarEl) {
                 // Try to load image based on first name
                 avatarEl.innerHTML = `<img src="images/${firstName}.jpeg" alt="${mentorName}" onerror="this.outerHTML='<span>${initials}</span>'">`;
@@ -277,7 +295,7 @@
         function setStatus(status) {
             const availBtn = document.getElementById('status-available');
             const dndBtn = document.getElementById('status-dnd');
-            
+
             if (status === 'available') {
                 availBtn.classList.add('active');
                 dndBtn.classList.remove('active');
@@ -292,4 +310,3 @@
     </script>
 </body>
 </html>
-

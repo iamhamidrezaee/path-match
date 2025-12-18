@@ -33,7 +33,7 @@
                     <h1>Become a Mentor</h1>
                     <p>Share your experience and guide the next generation.</p>
                 </div>
-            
+
                 <form class="auth-form" id="mentor-signup-form">
                     <!-- Account Info -->
                     <div class="form-field">
@@ -55,7 +55,7 @@
                         <label for="password">Password</label>
                         <input type="password" id="password" name="password" required>
                     </div>
-                    
+
                     <div class="form-field">
                         <label>Profile Image</label>
                         <input type="file" id="profileImage" name="profileImage" accept="image/*" required>
@@ -85,7 +85,7 @@
                             <option value="UX">UX (User Experience)</option>
                         </select>
                     </div>
-                    
+
                     <div class="form-field">
                         <label>Current Role / Career Pursuing</label>
                         <input type="text" name="career" placeholder="e.g. Product Manager at Tech Co." required>
@@ -128,7 +128,7 @@
                     <button class="btn-primary" type="submit" style="width: 100%; margin-top: 1rem;">Create Mentor Account</button>
                 </form>
             </div>
-            
+
             <div class="auth-visual">
                 <div class="auth-visual-pattern"></div>
                 <div class="auth-visual-content">
@@ -187,7 +187,7 @@
 
         document.getElementById("mentor-signup-form").addEventListener("submit", async function (e) {
             e.preventDefault();
-            
+
             const validTopics = validateCheckboxGroup("topics[]", "topics-error");
             const validCorr = validateCheckboxGroup("correspondence", "correspondence-error");
 
@@ -199,11 +199,17 @@
             const mentorName = document.getElementById('name').value;
             const mentorRole = document.querySelector('input[name="career"]').value;
             const mentorConcentration = document.getElementById('concentration').value;
-            
+            const mentorGradYear = document.getElementById('gradYear').value;
+            const mentorCalendly = document.querySelector('input[name="calendly"]').value;
+            const mentorTopics = getCheckedValues('topics[]');
+
             // Save to localStorage for the dashboard
             localStorage.setItem('mentorName', mentorName);
             localStorage.setItem('mentorRole', mentorRole);
             localStorage.setItem('mentorConcentration', mentorConcentration);
+            localStorage.setItem('mentorGradYear', mentorGradYear);
+            localStorage.setItem('mentorCalendly', mentorCalendly);
+            localStorage.setItem('mentorTopics', JSON.stringify(mentorTopics));
 
             // Build FormData for file upload support
             const formData = new FormData();
@@ -216,12 +222,12 @@
             formData.append('career', mentorRole);
             formData.append('calendly', document.querySelector('input[name="calendly"]').value);
             formData.append('bio', document.querySelector('textarea[name="bio"]').value);
-            
+
             // Add topics as array
             getCheckedValues('topics[]').forEach(topic => {
                 formData.append('topics[]', topic);
             });
-            
+
             // Add correspondence
             getCheckedValues('correspondence').forEach(corr => {
                 formData.append('correspondence[]', corr);
@@ -241,13 +247,13 @@
                 });
 
                 const data = await response.json();
-                
+
                 if (response.ok) {
                     // Store auth token
                     localStorage.setItem('accessToken', data.access_token);
                     localStorage.setItem('mentorId', data.mentor_id);
                     localStorage.setItem('userId', data.user?.id);
-                    
+
                     // Redirect to dashboard
                     window.location.href = `mentor-dashboard.html?welcome=true&name=${encodeURIComponent(mentorName)}`;
                 } else if (response.status === 409) {
@@ -266,4 +272,3 @@
     </script>
 </body>
 </html>
-
